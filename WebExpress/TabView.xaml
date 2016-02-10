@@ -31,7 +31,14 @@
             
         </Grid>
         <wpf:ChromiumWebBrowser x:Name="WebView" Margin="0,28,0,0" PreviewMouseDown="WebView_PreviewMouseDown">
-
+            <FrameworkElement.ContextMenu>
+                          <ContextMenu>
+                    <MenuItem Header="Back"
+                                        Command="{Binding WebBrowser.BackCommand}" />
+                    <MenuItem Header="Copy" Command="{Binding WebBrowser.CopyCommand}"/>
+                              <MenuItem Header="Paste" Command="{Binding WebBrowser.PasteCommand}"/>
+                          </ContextMenu>
+                     </FrameworkElement.ContextMenu>
         </wpf:ChromiumWebBrowser>
         <Grid  x:Name="ListContainer" Height="229" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="White" Margin="0,28,0,0"  >
             <Grid.Effect>

@@ -18,7 +18,7 @@ namespace WebExpress
     /// <summary>
     ///     Interaction logic for TabView.xaml
     /// </summary>
-    public partial class TabView : UserControl, IFocusHandler
+    public partial class TabView : UserControl, IFocusHandler, IDisplayHandler
     {
         private readonly MainWindow mainWindow;
         private readonly string splitChar;
@@ -70,6 +70,7 @@ namespace WebExpress
             Loaded += TabView_Loaded;
             LastWebsite = "";
             splitChar = " - ";
+            WebView.DisplayHandler = this;
             ListContainer.Visibility = Visibility.Hidden;
             if (!Directory.Exists(Webexpresspath))
             {
@@ -199,7 +200,6 @@ namespace WebExpress
             {
                 if (e.Frame.IsMain)
                 {
-                    Task.Factory.StartNew(() => GetFavicon(e.Url));
                     Task.Factory.StartNew(() => SetAddress(e.Url));
                    
                 }
@@ -214,25 +214,6 @@ namespace WebExpress
             Dispatcher.Invoke(() => { textBox.Text = text; });
         }
 
-        private void GetFavicon(string url)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                try
-                {
-                    var bitmap2 = new BitmapImage();
-                    bitmap2.BeginInit();
-                    bitmap2.UriSource = new Uri("http://www.google.com/s2/favicons?domain=" + url, UriKind.Absolute);
-                    bitmap2.EndInit();
-
-                    mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Get favicon error: " + ex.Message);
-                }
-            });
-        }
 
         private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -317,6 +298,59 @@ namespace WebExpress
         private void WebView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             ListContainer.Visibility = Visibility.Hidden;
+        }
+
+        public void OnAddressChanged(IWebBrowser browserControl, AddressChangedEventArgs addressChangedArgs)
+        {
+            
+        }
+
+        public void OnTitleChanged(IWebBrowser browserControl, TitleChangedEventArgs titleChangedArgs)
+        {
+           
+        }
+
+        public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    var bitmap2 = new BitmapImage();
+                    bitmap2.BeginInit();
+                    foreach (string url in urls)
+                    {
+                        bitmap2.UriSource = new Uri(url, UriKind.Absolute);
+                    }
+                    bitmap2.EndInit();
+
+                    mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Get favicon error: " + ex.Message);
+                }
+            });
+            Console.WriteLine("changed");
+        }
+
+        public void OnFullscreenModeChange(IWebBrowser browserControl, IBrowser browser, bool fullscreen)
+        {
+        }
+
+        public bool OnTooltipChanged(IWebBrowser browserControl, string text)
+        {
+            return true;
+        }
+
+        public void OnStatusMessage(IWebBrowser browserControl, StatusMessageEventArgs statusMessageArgs)
+        {
+        }
+
+        public bool OnConsoleMessage(IWebBrowser browserControl, ConsoleMessageEventArgs consoleMessageArgs)
+        {
+            return true;
         }
     }
 }
