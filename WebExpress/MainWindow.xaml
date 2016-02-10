@@ -1,0 +1,42 @@
+﻿<Window x:Name="MainGrid" x:Class="WebExpress.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebExpress"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="640" Width="1024" StateChanged="MainGrid_StateChanged">
+
+
+    <Grid  x:Name="Grid" Background="White" Opacity="0.995">
+        <Grid Height="26" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" MouseDown="TabBar_MouseDown" Background="LightGray" Margin="0,0,148,0"/>
+
+            <Button x:Name="Close" Width="30"  Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Close_Click" Margin="0,0,10,0">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/close_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Maximize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Maximize_Click" Margin="0,0,46,0">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/maximize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Minimize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,78,0">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/minimize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Menu" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,113,0">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/menu.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Grid Margin="0,26,0,0" x:Name="container">
+
+        </Grid>
+    </Grid>
+
+</Window>
