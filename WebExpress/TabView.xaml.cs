@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using CefSharp;
@@ -22,7 +21,7 @@ namespace WebExpress
     public partial class TabView : UserControl, IFocusHandler
     {
         private readonly MainWindow mainWindow;
-        private readonly ArrayList suggestions;
+        private readonly string splitChar;
 
         private List<string> allItems1;
 
@@ -68,9 +67,9 @@ namespace WebExpress
             WebView.TitleChanged += WebView_TitleChanged;
             mainWindow = mw;
             allItems1 = new List<string>();
-            suggestions = new ArrayList();
             Loaded += TabView_Loaded;
             LastWebsite = "";
+            splitChar = " - ";
             ListContainer.Visibility = Visibility.Hidden;
             if (!Directory.Exists(Webexpresspath))
             {
@@ -125,23 +124,23 @@ namespace WebExpress
                     {
                         if (!s.Contains("#q="))
                         {
-                            string[] split = Regex.Split(s, " - ");
-                            listBox.Items.Add(split[0] + " - " + split[1]);
-                            allItems1.Add(split[0] + " - " + split[1]);
+                            string[] split = Regex.Split(s, splitChar);
+                            listBox.Items.Add(split[0] + splitChar + split[1]);
+                            allItems1.Add(split[0] + splitChar + split[1]);
                         }
                         else
                         {
                             string[] split = Regex.Split(s, "#q=");
-                            string[] split1 = Regex.Split(split[1], " - ");
-                            allItems1.Add(split1[0] + " - " + split1[1]);
-                            listBox.Items.Add(split1[0] + " - " + split1[1]);
+                            string[] split1 = Regex.Split(split[1], splitChar);
+                            allItems1.Add(split1[0] + splitChar + split1[1]);
+                            listBox.Items.Add(split1[0] + splitChar + split1[1]);
                         }
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    
+                    Console.WriteLine("Load suggestions error: " + ex.Message);
                 }
             });
         }
@@ -176,7 +175,7 @@ namespace WebExpress
                     var filePath1 = Suggestionspath;
                         using (var sw = new StreamWriter(filePath1, true))
                         {
-                            sw.WriteLine(WebView.Address + " - " + Title);
+                            sw.WriteLine(WebView.Address + splitChar + Title);
                             sw.Close();
                         }
                         LastWebsite = WebView.Address;
@@ -230,6 +229,7 @@ namespace WebExpress
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Get favicon error: " + ex.Message);
                 }
             });
         }
@@ -250,9 +250,9 @@ namespace WebExpress
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                System.Console.WriteLine("Listbox1 error");
+                System.Console.WriteLine("Listbox1 error: " + ex.Message);
             }
                 if (e.Key == Key.Down)
                 {
@@ -303,13 +303,14 @@ namespace WebExpress
             {
                 if (!listBox.SelectedItem.ToString().Equals(null))
                 {
-                    string[] split = listBox.SelectedItem.ToString().Split(new string[] { " - "}, StringSplitOptions.None)
+                    string[] split = listBox.SelectedItem.ToString().Split(new string[] {splitChar}, StringSplitOptions.None)
                     ;
                     WebView.Load(split[0]);
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Listbox mouse click error: " + ex.Message);
             }
         }
 

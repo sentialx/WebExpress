@@ -1,10 +1,7 @@
-﻿
-using System;
-using System.Drawing;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Brushes = System.Windows.Media.Brushes;
 
@@ -15,13 +12,16 @@ namespace WebExpress
         public TabView form;
         private bool _bgTab;
         public MainWindow mainWindow;
+        private int closeTabMargin;
+        private int favIconMargin;
         public Tab(string title, MainWindow mw)
         {
             InitializeComponent();
             label_TabTitle.Content = title;
             Loaded += Tab_Loaded;
             mainWindow = mw;
-
+            closeTabMargin = 8;
+            favIconMargin = 6;
         }
 
         private void Tab_Loaded(object sender, RoutedEventArgs e)
@@ -43,9 +43,9 @@ namespace WebExpress
                     parentForm3.SelectTab(parentForm3.TabCollection[i + 1]);
                 }
             }
-            if (this.ActualWidth - (CloseTab.ActualWidth + 8) > 0)
+            if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) > 0)
             {
-                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + 8);
+                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
             }
             label_TabTitle.Margin = new Thickness(6, 1, 0, 0);
         }
@@ -71,7 +71,7 @@ namespace WebExpress
         {
             this.Dispatcher.Invoke((Action) (() =>
             {
-                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + 12) - (FavIcon.Width + 6);
+                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin);
                 label_TabTitle.Margin = new Thickness(FavIcon.Width + 6, 1, 0, 0);
                 FavIcon.Source = icon;
             }));
@@ -103,16 +103,16 @@ namespace WebExpress
         {
             if (label_TabTitle.Margin == new Thickness(6, 1, 0, 0))
             {
-                if (this.ActualWidth - (CloseTab.ActualWidth + 8) - (FavIcon.Width + 6) > 0)
+                if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin) > 0)
                 {
-                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + 8);
+                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
                 }
             }
             else
             {
-                if (this.ActualWidth - (CloseTab.ActualWidth + 8) - (FavIcon.Width + 6) > 0)
+                if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin) > 0)
                 {
-                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + 8) - (FavIcon.Width + 6);
+                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin);
                 }
             }
         }
