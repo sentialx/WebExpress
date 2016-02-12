@@ -6,6 +6,6 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 
 #Features
 
-*Tabs
-*History
-*Suggestions
+* Tabs
+* History
+* Suggestions
