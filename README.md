@@ -6,9 +6,11 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 
 #Features
 
-* Tabs
+* Colored tabs
 * History
 * Suggestions
+* Menu
+* Downloads
 
 #Engine
 This browser is using CefSharp. You can find it on: https://github.com/amaitland/CefSharp
