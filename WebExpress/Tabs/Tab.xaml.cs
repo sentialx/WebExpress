@@ -47,40 +47,45 @@ namespace WebExpress
 
         public Tab(string title, MainWindow mw, UserControl uc, System.Windows.Media.Brush brush)
         {
-            InitializeComponent();
-            form = uc;
-            color = brush;
-            actualForeground = Brushes.Black;
-            form.HorizontalAlignment = HorizontalAlignment.Stretch;
-            form.VerticalAlignment = VerticalAlignment.Stretch;
-            label_TabTitle.Content = title;
-            Loaded += Tab_Loaded;
-            mainWindow = mw;
-            closeTabMargin = 8;
-            favIconMargin = 6;
+            Dispatcher.Invoke(() =>
+            {
+                InitializeComponent();
+                form = uc;
+                color = brush;
+                actualForeground = Brushes.Black;
+                form.HorizontalAlignment = HorizontalAlignment.Stretch;
+                form.VerticalAlignment = VerticalAlignment.Stretch;
+                label_TabTitle.Content = title;
+                Loaded += Tab_Loaded;
+                mainWindow = mw;
+                closeTabMargin = 8;
+                favIconMargin = 6;
+            });
         }
 
         private void Tab_Loaded(object sender, RoutedEventArgs e)
         {
-            
 
-            Canvas parentForm = this.Parent as Canvas;
-            Grid parentForm2 = parentForm.Parent as Grid;
-            TabBar parentForm3 = parentForm2.Parent as TabBar;
-            mainWindow.container.Children.Add(form);
-            parentForm3.SelectTab(this);
-            if (parentForm3.TabCollection.Count > 0)
+            Dispatcher.Invoke(() =>
             {
-                for (var i = 0; i < parentForm3.TabCollection.Count - 1; i++)
+                Canvas parentForm = this.Parent as Canvas;
+                Grid parentForm2 = parentForm.Parent as Grid;
+                TabBar parentForm3 = parentForm2.Parent as TabBar;
+                mainWindow.container.Children.Add(form);
+                parentForm3.SelectTab(this);
+                if (parentForm3.TabCollection.Count > 0)
                 {
-                    parentForm3.SelectTab(parentForm3.TabCollection[i + 1]);
+                    for (var i = 0; i < parentForm3.TabCollection.Count - 1; i++)
+                    {
+                        parentForm3.SelectTab(parentForm3.TabCollection[i + 1]);
+                    }
                 }
-            }
-            if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) > 0)
-            {
-                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
-            }
-            label_TabTitle.Margin = new Thickness(6, 1, 0, 0);
+                if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) > 0)
+                {
+                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
+                }
+                label_TabTitle.Margin = new Thickness(6, 1, 0, 0);
+            });
         }
 
         public bool bgTab

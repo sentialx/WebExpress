@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:WebExpress.Applets"
              mc:Ignorable="d" 
              d:DesignHeight="640" d:DesignWidth="1024">
-    <Grid Background="White">
-        <Grid HorizontalAlignment="Left" Height="70" VerticalAlignment="Top" Width="1024" Background="#FF1ABC9C">
+    <Grid Background="White" SizeChanged="Grid_SizeChanged">
+        <Grid HorizontalAlignment="Stretch" Height="70" VerticalAlignment="Top" Background="#FF1ABC9C">
             <Grid.Effect>
                 <DropShadowEffect Direction="-90" ShadowDepth="10" BlurRadius="15" Opacity="0.25"/>
             </Grid.Effect>

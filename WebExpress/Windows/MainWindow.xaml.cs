@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shell;
 
 
@@ -9,7 +10,7 @@ namespace WebExpress
 {
     public partial class MainWindow : Window
     {
-
+        public bool menuToggled;
         private bool maximized;
         public MainWindow()
         {
@@ -23,17 +24,21 @@ namespace WebExpress
             {
                 WindowState = WindowState.Normal;
             }
+
             Loaded += MainWindow_Loaded;
             WindowChrome wc = new WindowChrome();
             WindowChrome.SetWindowChrome(this, wc);
+            Downloads1.Visibility = Visibility.Hidden;
             wc.CaptionHeight = 0;
             wc.UseAeroCaptionButtons = false;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            TabBar.AddTab("New tab", this, new TabView(this), Brushes.White);
-            
+            TabBar.AddTab("New tab", this, new TabView(this, ""), Brushes.White);
+            Menu.mainWindow = this;
+            menuToggled = false;
+            Menu.Visibility = Visibility.Hidden;
         }
 
         private void TabBar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -75,7 +80,20 @@ namespace WebExpress
             }
         }
 
-       
+
+        private void MainGrid_PreviewMouseDown(object sender, EventArgs e)
+        {
+            Storyboard sb = this.FindResource("sb") as Storyboard;
+            Storyboard.SetTarget(sb, this.Menu);
+            sb.Begin();
+            sb.Completed +=
+             (o, e1) =>
+             {
+
+                 Menu.Visibility = Visibility.Hidden;
+                 menuToggled = false;
+             };
+        }
     }
 
 }

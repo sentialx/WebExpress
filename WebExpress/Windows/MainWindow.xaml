@@ -6,10 +6,19 @@
         xmlns:local="clr-namespace:WebExpress"
         xmlns:Controls="clr-namespace:WebExpress.Controls" x:Name="MainGrid" x:Class="WebExpress.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="640" Width="1024" StateChanged="MainGrid_StateChanged">
+        Title="MainWindow" Height="640" Width="1024" StateChanged="MainGrid_StateChanged" Activated="MainGrid_PreviewMouseDown">
+    <Window.Resources>
 
+        <Storyboard x:Key="sb2" x:Name="sb2">
+            <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="266"  />
+        </Storyboard>
+        <Storyboard x:Key="sb" x:Name="sb">
+            <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="0"  />
+        </Storyboard>
+    </Window.Resources>
 
     <Grid  x:Name="Grid" Background="White" Opacity="0.995">
+        
         <Grid Height="26" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" MouseDown="TabBar_MouseDown" Background="LightGray" Margin="0,0,148,0"/>
 
@@ -31,6 +40,8 @@
 
         </Grid>
         <Grid x:Name="container" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="0,26,0,0" />
+        <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" />
+        <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,42,0,0"></local:Downloads>
     </Grid>
 
 </Window>

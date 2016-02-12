@@ -21,5 +21,10 @@ namespace WebExpress.Applets
             var brush = (Brush)converter.ConvertFromString("#1abc9c");
             mainWindow.TabBar.getTabFromForm(this).Background = brush;
         }
+
+        private void Grid_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+
+        }
     }
 }

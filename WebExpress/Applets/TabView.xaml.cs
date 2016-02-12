@@ -15,17 +15,17 @@ using UserControl = System.Windows.Controls.UserControl;
 using System.Windows.Media.Animation;
 using System.Drawing;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 
 namespace WebExpress
 {
     /// <summary>
     ///     Interaction logic for TabView.xaml
     /// </summary>
-    public partial class TabView : UserControl, IFocusHandler, IDisplayHandler
+    public partial class TabView : UserControl, IDisplayHandler, IDownloadHandler, ILifeSpanHandler
     {
-        private bool menuToggled;
         private readonly MainWindow mainWindow;
-        private readonly string splitChar;
+        private readonly char splitChar;
         private System.Drawing.Color _color;
 
         private List<string> allItems1;
@@ -65,22 +65,24 @@ namespace WebExpress
         public string Webexpresspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress");
 
-        public TabView(MainWindow mw)
+        private string urlToLoad;
+
+        public TabView(MainWindow mw, string url)
         {
             InitializeComponent();
             WebView.FrameLoadEnd += WebView_FrameLoadEnd;
             WebView.TitleChanged += WebView_TitleChanged;
             mainWindow = mw;
-            Menu.mainWindow = mw;
-            menuToggled = false;
-            Menu.Visibility = Visibility.Hidden;
+            
             allItems1 = new List<string>();
             Loaded += TabView_Loaded;
             LastWebsite = "";
-            splitChar = " - ";
+            WebView.LifeSpanHandler = this;
+            splitChar = (char)42;
+            WebView.DownloadHandler = this;
             WebView.DisplayHandler = this;
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
-            ListContainer.Visibility = Visibility.Hidden;
+            HideSuggestions();
             if (!Directory.Exists(Webexpresspath))
             {
                 Directory.CreateDirectory(Webexpresspath);
@@ -90,8 +92,10 @@ namespace WebExpress
             {
                 Directory.CreateDirectory(Userdatapath);
             }
-            
+            urlToLoad = url;
+           
         }
+
 
         private void WebView_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -99,27 +103,16 @@ namespace WebExpress
             {
                 Cef.Initialize();
             }
+            if (WebView.IsInitialized)
+            {
+                WebView.Load(urlToLoad);
+            }
         }
 
         private void TabView_Loaded(object sender, RoutedEventArgs e)
         {
             Task.Factory.StartNew(LoadSuggestions);
-        }
 
-        public void OnGotFocus()
-        {
-            ListContainer.Visibility = Visibility.Hidden;
-        }
-
-        public bool OnSetFocus(CefFocusSource source)
-        {
-            ListContainer.Visibility = Visibility.Hidden;
-            return false;
-        }
-
-        public void OnTakeFocus(bool next)
-        {
-            ListContainer.Visibility = Visibility.Hidden;
         }
 
         private void LoadSuggestions()
@@ -142,16 +135,16 @@ namespace WebExpress
                     {
                         if (!s.Contains("#q="))
                         {
-                            string[] split = Regex.Split(s, splitChar);
-                            listBox.Items.Add(split[0] + splitChar + split[1]);
-                            allItems1.Add(split[0] + splitChar + split[1]);
+                            string[] split = s.Split(splitChar);
+                            listBox.Items.Add(split[0] + " - " + split[1]);
+                            allItems1.Add(split[0] + " - " + split[1]);
                         }
                         else
                         {
                             string[] split = Regex.Split(s, "#q=");
-                            string[] split1 = Regex.Split(split[1], splitChar);
-                            allItems1.Add(split1[0] + splitChar + split1[1]);
-                            listBox.Items.Add(split1[0] + splitChar + split1[1]);
+                            string[] split1 = split[1].Split(splitChar);
+                            allItems1.Add(split1[0]);
+                            listBox.Items.Add(split1[0]);
                         }
                     }
 
@@ -162,8 +155,6 @@ namespace WebExpress
                 }
             });
         }
-
-
         public void WriteHistory()
         {
             Dispatcher.Invoke(() =>
@@ -180,8 +171,7 @@ namespace WebExpress
                     }
                 }
                 if (!LastWebsite.Equals(WebView.Address))
-                    {
-                        
+                    {       
                     using (var sw = new StreamWriter(Historypath, true))
                     {
                         sw.WriteLine(
@@ -198,10 +188,7 @@ namespace WebExpress
                         }
                         LastWebsite = WebView.Address;
                     }
-                
-
             });
-
         }
 
 
@@ -221,8 +208,6 @@ namespace WebExpress
                    
                 }
                 Task.Factory.StartNew(WriteHistory);
-                Panel.Height = 28;
-                WebView.Margin = new Thickness(0, 28, 0, 0);
             });
         }
 
@@ -236,13 +221,30 @@ namespace WebExpress
             WebView.Dispose();
         }
 
+        private void HideSuggestions()
+        {
+        Panel.Effect =
+        new DropShadowEffect
+        {
+            Color = new System.Windows.Media.Color { A = 255, R = 0, G = 0, B = 0 },
+            Direction = -90,
+            ShadowDepth = 2.5,
+            Opacity = 0.125
+        };
+           ListContainer.Visibility = Visibility.Hidden;
+        }
+        private void ShowSuggestions()
+        {
+            Panel.Effect = null;
+            ListContainer.Visibility = Visibility.Visible;
+        }
+
         private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
-
-
             try
             {
-                ListContainer.Visibility = Visibility.Visible;
+                ShowSuggestions();
+                
                 listBox.Items.Clear();
                 List<string> allitems = allItems1.Distinct().ToList();
                 for (int i = 0; i <= allitems.Count - 1; i++)
@@ -274,7 +276,7 @@ namespace WebExpress
                     textBox.Text = textBox.Text.Replace(textBox.Text, "http://google.com/#q=" + textBox.Text);
                     WebView.Load(textBox.Text);
                 }
-                ListContainer.Visibility = Visibility.Hidden;
+                HideSuggestions();
             }
         }
 
@@ -293,19 +295,15 @@ namespace WebExpress
             WebView.Reload();
         }
 
-        private void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
         private void listBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
                 if (!listBox.SelectedItem.ToString().Equals(null))
                 {
-                    string[] split = listBox.SelectedItem.ToString().Split(new string[] {splitChar}, StringSplitOptions.None);
+                    string[] split = listBox.SelectedItem.ToString().Split(splitChar);
                     WebView.Load(split[0]);
-                    ListContainer.Visibility = Visibility.Hidden;
+                    HideSuggestions();
                 }
             }
             catch (Exception ex)
@@ -316,17 +314,7 @@ namespace WebExpress
 
         private void WebView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            ListContainer.Visibility = Visibility.Hidden;
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this.Menu);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
-
-                 Menu.Visibility = Visibility.Hidden;
-                 menuToggled = false;
-             };
+            HideSuggestions();
         }
 
         public void OnAddressChanged(IWebBrowser browserControl, AddressChangedEventArgs addressChangedArgs)
@@ -338,21 +326,53 @@ namespace WebExpress
         {
            
         }
+        public static System.Drawing.Color getDominantColor(Bitmap bmp)
+        {
+            int r = 0;
+            int g = 0;
+            int b = 0;
 
+            int total = 0;
+
+            for (int x = 0; x < bmp.Width; x++)
+            {
+                for (int y = 0; y < bmp.Height; y++)
+                {
+                    System.Drawing.Color clr = bmp.GetPixel(x, y);
+
+                    r += clr.R;
+                    g += clr.G;
+                    b += clr.B;
+
+                    total++;
+                }
+            }
+
+            r /= total;
+            g /= total;
+            b /= total;
+
+            return System.Drawing.Color.FromArgb(r, g, b);
+        }
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
             Dispatcher.Invoke(() =>
             {
-                try
-                {
                     var bitmap2 = new BitmapImage();
 
                     bitmap2.BeginInit();
                     bitmap2.UriSource = new Uri(urls[0], UriKind.Absolute);
-                    bitmap2.EndInit();
-                    Bitmap bmp = BitmapImage2Bitmap(bitmap2);
-                    System.Drawing.Color color = bmp.GetPixel(10, 10);
-                    _color = color;
+                System.Net.WebRequest request =
+      System.Net.WebRequest.Create(
+      urls[0]);
+                System.Net.WebResponse response = request.GetResponse();
+                System.IO.Stream responseStream =
+                    response.GetResponseStream();
+                Bitmap bmp = new Bitmap(responseStream);
+                System.Drawing.Color color = getDominantColor(bmp);
+                _color = color;
+                bitmap2.EndInit();
+
                     System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
                     SolidColorBrush brush = new SolidColorBrush(newColor);
                     mainWindow.TabBar.getTabFromForm(this).Color = brush;
@@ -364,12 +384,6 @@ namespace WebExpress
                     mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
                   
                     ContrastColor(color);
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Get favicon error: " + ex.Message);
-                }
             });
             Console.WriteLine("changed");
         }
@@ -395,20 +409,7 @@ namespace WebExpress
             }
          
         }
-        private System.Drawing.Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
-        {
-            
 
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-
-                return new System.Drawing.Bitmap(bitmap);
-            }
-        }
         public void OnFullscreenModeChange(IWebBrowser browserControl, IBrowser browser, bool fullscreen)
         {
         }
@@ -432,16 +433,16 @@ namespace WebExpress
             switch (e.Key)
             {
                 case Key.Down:
-                    ListContainer.Visibility = Visibility.Visible;
+                    ShowSuggestions();
                     listBox.Focus();
                     listBox.SelectedIndex = 0;
                     break;
 
                 case Key.Enter:
                     try {
-                        string[] split = listBox.SelectedItem.ToString().Split(new string[] { splitChar }, StringSplitOptions.None);
+                        string[] split = listBox.SelectedItem.ToString().Split(splitChar);
                         WebView.Load(split[0]);
-                        ListContainer.Visibility = Visibility.Hidden;
+                        HideSuggestions();
                     } catch
                     {
 
@@ -455,9 +456,19 @@ namespace WebExpress
             switch (e.Key)
             {
                 case Key.Enter: 
-                    string[] split = listBox.SelectedItem.ToString().Split(new string[] { splitChar }, StringSplitOptions.None);
-                    WebView.Load(split[0]);
-                    ListContainer.Visibility = Visibility.Hidden;     
+                    string[] split = listBox.SelectedItem.ToString().Split(splitChar);
+                    if (!split[0].Contains("http://") | !split[0].Contains("https://"))
+                    {
+                        string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
+                        WebView.Load("https://google.com/#q=" + split1[0]);
+                    }
+                    
+                    if (split[0].Contains("http://") | split[0].Contains("https://"))
+                    {
+                        string[] split1 = listBox.SelectedItem.ToString().Split(new string[] {" - "}, StringSplitOptions.None);
+                        WebView.Load(split1[0]);
+                    }
+                    HideSuggestions();     
                     break;
 
                 case Key.Up:
@@ -473,30 +484,59 @@ namespace WebExpress
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
 
-                Menu.Height = 0;
-                Menu.Visibility = Visibility.Visible;
-                Storyboard sb = this.FindResource("sb2") as Storyboard;
-                Storyboard.SetTarget(sb, this.Menu);
+                mainWindow.Menu.Height = 0;
+                mainWindow.Menu.Visibility = Visibility.Visible;
+                Storyboard sb = mainWindow.FindResource("sb2") as Storyboard;
+                Storyboard.SetTarget(sb, mainWindow.Menu);
                 sb.Begin();
-                menuToggled = true;
+                mainWindow.menuToggled = true;
+        }
 
+
+        public void OnBeforeDownload(IBrowser browser, CefSharp.DownloadItem downloadItem, IBeforeDownloadCallback callback)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                mainWindow.Downloads1.AddDownload(downloadItem.Url, "C:\\Users\\Sential\\Downloads\\", downloadItem.SuggestedFileName);
+                mainWindow.Downloads1.Visibility = Visibility.Visible;
+            });
+        }
+
+        public void OnDownloadUpdated(IBrowser browser, CefSharp.DownloadItem downloadItem, IDownloadItemCallback callback)
+        {
+
+        }
+
+        public void LoadUrl(string url)
+        {
+            WebView.Load(url);
+        }
+
+        public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IWindowInfo windowInfo, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
+        {
+            newBrowser = null;
+            Dispatcher.Invoke(() => {
+                
+
+                TabView tv = new TabView(mainWindow, targetUrl);
+                mainWindow.TabBar.AddTab("New tab", mainWindow, tv, System.Windows.Media.Brushes.White);
+            });
+                return true;
+        }
+
+        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
+        {
             
         }
 
-
-        private void ListContainer_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        public bool DoClose(IWebBrowser browserControl, IBrowser browser)
         {
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this.Menu);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
-
-                 Menu.Visibility = Visibility.Hidden;
-                 menuToggled = false;
-             };
+            return false;
         }
 
+        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
+        {
+            
+        }
     }
 }

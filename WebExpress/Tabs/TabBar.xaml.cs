@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -34,31 +35,33 @@ namespace WebExpress
 
         public void AddTab(string title, MainWindow mw, UserControl userControl, Brush brush)
         {
-            tab = new Tab(title, mw, userControl, brush);
-
-
-            tab.Width = tabWidth;
-            tab.Height = tabHeight;
-            canvas.Children.Add(tab);
-            Canvas.SetLeft(tab, TabCount*tabWidth);
-            Canvas.SetTop(tab, 0);
-            Canvas.SetTop(AddButton, 0);
-            if (AddButtonCount == 1)
+            Dispatcher.Invoke(() =>
             {
-                AddButton.BeginAnimation(Canvas.LeftProperty,
-                    new DoubleAnimation(0, AddButtonCount*tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
-            }
-            else
-            {
-                AddButton.BeginAnimation(Canvas.LeftProperty,
-                    new DoubleAnimation(Canvas.GetLeft(AddButton), AddButtonCount * tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
-            }
-            TabCount += 1;
-            AddButtonCount += 1;
-            TabCollection.Add(tab);
-            
+                tab = new Tab(title, mw, userControl, brush);
 
-            
+
+                tab.Width = tabWidth;
+                tab.Height = tabHeight;
+                canvas.Children.Add(tab);
+                Canvas.SetLeft(tab, TabCount * tabWidth);
+                Canvas.SetTop(tab, 0);
+                Canvas.SetTop(AddButton, 0);
+                if (AddButtonCount == 1)
+                {
+                    AddButton.BeginAnimation(Canvas.LeftProperty,
+                        new DoubleAnimation(0, AddButtonCount * tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
+                }
+                else
+                {
+                    AddButton.BeginAnimation(Canvas.LeftProperty,
+                        new DoubleAnimation(Canvas.GetLeft(AddButton), AddButtonCount * tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
+                }
+                TabCount += 1;
+                AddButtonCount += 1;
+                TabCollection.Add(tab);
+
+
+
                 var fade = new DoubleAnimation()
                 {
                     From = 0,
@@ -71,12 +74,13 @@ namespace WebExpress
                 var sb = new Storyboard();
                 sb.Children.Add(fade);
                 sb.Begin();
-            
 
 
 
-            CalcSizes();
-            mainWindow = mw;
+
+                CalcSizes();
+                mainWindow = mw;
+            });
         }
         public Tab getTabFromForm(UserControl form)
         {
@@ -139,7 +143,7 @@ namespace WebExpress
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            AddTab("New tab", mainWindow, new TabView(mainWindow), Brushes.White);
+            AddTab("New tab", mainWindow, new TabView(mainWindow, ""), Brushes.White);
             CalcSizes();
         }
 
