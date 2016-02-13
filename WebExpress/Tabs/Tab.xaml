@@ -22,7 +22,7 @@
 
         <Button x:Name="CloseTab" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right"  Click="button_close_Click" Margin="0,3,4,3">
             <StackPanel Orientation="Horizontal">
-                <Image Source="pack://application:,,,/Resources/close_Tab.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4,4,4,4"/>
+                <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_Tab.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4,4,4,4"/>
             </StackPanel>
         </Button>
         <Image x:Name="FavIcon" HorizontalAlignment="Left" Height="16" Width="16" VerticalAlignment="Top" Margin="5,5,0,0" />

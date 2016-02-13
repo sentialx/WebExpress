@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="WebExpress.AddBookmark"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WebExpress"
+             mc:Ignorable="d" Height="176" Width="260">
+    <Grid Background="White" Margin="20">
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="15" Opacity="0.2" Direction="-90" ShadowDepth="8"/>
+        </Grid.Effect>
+        <Label x:Name="Header" Content="Add bookmark" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="21.333"/>
+        <Label x:Name="Title" Content="Title:" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TitleBox" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Margin="50,64,20,0" BorderBrush="#FFE6E6E6"/>
+        <Button x:Name="button" Content="Done" HorizontalAlignment="Right" Margin="0,0,20,10" VerticalAlignment="Bottom" Width="75" Background="White" Height="30" BorderBrush="#FFD6D6D6" Click="button_Click"/>
+        <Button x:Name="button1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,19,15,0" Click="button1_Click">
+            <Image Source="pack://application:,,,/Resources/close_button.png"></Image>
+        </Button>
+    </Grid>
+</UserControl>

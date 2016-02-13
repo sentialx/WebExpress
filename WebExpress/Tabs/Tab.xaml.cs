@@ -17,6 +17,7 @@ namespace WebExpress
         public Brush actualForeground;
         private Brush color;
         private int favIconMargin;
+        public bool darkColor;
 
         public Brush Color
         {
@@ -41,7 +42,7 @@ namespace WebExpress
                 bg.Background = color;
             } else
             {
-                bg.Background = Brushes.LightGray;
+                bg.Background = Brushes.Transparent;
             }
         }
 
@@ -49,6 +50,7 @@ namespace WebExpress
         {
             Dispatcher.Invoke(() =>
             {
+                darkColor = false;
                 InitializeComponent();
                 form = uc;
                 color = brush;
@@ -97,12 +99,26 @@ namespace WebExpress
                 if (value == true)
                 {
                     
-                    bg.Background = Brushes.LightGray;
+                    bg.Background = Brushes.Transparent;
                     label_TabTitle.Foreground = Brushes.Black;
+                    BitmapImage closeBtn = new BitmapImage();
+                    closeBtn.BeginInit();
+                    closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab.png");
+                    closeBtn.EndInit();
+                    CloseImage.Source = closeBtn;
                 }
                 else {
+
                     bg.Background = color;
                     label_TabTitle.Foreground = actualForeground;
+                    if (darkColor)
+                    {
+                        BitmapImage closeBtn = new BitmapImage();
+                        closeBtn.BeginInit();
+                        closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab_white.png");
+                        closeBtn.EndInit();
+                        CloseImage.Source = closeBtn;
+                    }
                 }
             }
         }
@@ -170,7 +186,7 @@ namespace WebExpress
         {
             if (bgTab)
             {
-                bg.Background = Brushes.LightGray;
+                bg.Background = Brushes.Transparent;
             }
         }
     }

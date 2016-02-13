@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebExpress"
+        xmlns:bookmarks="clr-namespace:WebExpress.Bookmarks"
         xmlns:Controls="clr-namespace:WebExpress.Controls" x:Name="MainGrid" x:Class="WebExpress.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="640" Width="1024" StateChanged="MainGrid_StateChanged" Activated="MainGrid_PreviewMouseDown">
@@ -19,8 +20,8 @@
 
     <Grid  x:Name="Grid" Background="White" Opacity="0.995">
         
-        <Grid Height="26" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" MouseDown="TabBar_MouseDown" Background="LightGray" Margin="0,0,148,0"/>
+        <Grid Height="26" Background="#FFF0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Top" MouseDown="Grid_MouseDown">
+            <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" Margin="0,0,148,0"/>
 
             <Button x:Name="Close" Width="30"  Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Close_Click" Margin="0,0,10,0">
                 <StackPanel Orientation="Horizontal">
@@ -42,6 +43,7 @@
         <Grid x:Name="container" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="0,26,0,0" />
         <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" />
         <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,42,0,0"></local:Downloads>
+        
     </Grid>
 
 </Window>

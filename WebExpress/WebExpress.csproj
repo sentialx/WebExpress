@@ -11,13 +11,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebExpress</RootNamespace>
     <AssemblyName>WebExpress</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -28,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +39,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +65,10 @@
     <StartupObject>WebExpress.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -84,8 +91,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bookmarks\AddBookmark.xaml.cs">
+      <DependentUpon>AddBookmark.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Applets\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bookmarks\BookmarkItem.xaml.cs">
+      <DependentUpon>BookmarkItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bookmarks\Bookmarks.xaml.cs">
+      <DependentUpon>Bookmarks.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
@@ -96,13 +112,34 @@
     <Compile Include="Downloads\Downloads.xaml.cs">
       <DependentUpon>Downloads.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Applets\StartPage.xaml.cs">
+      <DependentUpon>StartPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions.xaml.cs">
+      <DependentUpon>Extensions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extension.xaml.cs">
+      <DependentUpon>Extension.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\TabBar.xaml.cs">
       <DependentUpon>TabBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Applets\TabView.xaml.cs">
       <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Bookmarks\AddBookmark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Applets\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Bookmarks\BookmarkItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Bookmarks\Bookmarks.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -115,6 +152,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Downloads\Downloads.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Applets\StartPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Extensions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Extension.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -198,7 +247,34 @@
   <ItemGroup>
     <Resource Include="Resources\menu.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\about.html" />
+    <Resource Include="Resources\menu_hover_white.png" />
+    <Resource Include="Resources\menu_white.png" />
+    <Resource Include="Resources\back_hover.png" />
+    <Resource Include="Resources\back_hover_white.png" />
+    <Resource Include="Resources\back_white.png" />
+    <Resource Include="Resources\bookmark.png" />
+    <Resource Include="Resources\bookmark_hover.png" />
+    <Resource Include="Resources\bookmark_hover_white.png" />
+    <Resource Include="Resources\bookmark_white.png" />
+    <Resource Include="Resources\close_button_hover.png" />
+    <Resource Include="Resources\close_Tab_white.png" />
+    <Resource Include="Resources\forward_hover.png" />
+    <Resource Include="Resources\forward_white.png" />
+    <Resource Include="Resources\forward_white_hover.png" />
+    <Resource Include="Resources\maximize_button_hover.png" />
+    <Resource Include="Resources\menu_hover.png" />
+    <Resource Include="Resources\minimize_button_hover.png" />
+    <Resource Include="Resources\reload_hover.png" />
+    <Resource Include="Resources\reload_hover_white.png" />
+    <Resource Include="Resources\reload_white.png" />
+    <Resource Include="Resources\stop.png" />
+    <Resource Include="Resources\stop_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -12,6 +12,7 @@ namespace WebExpress
     {
         public bool menuToggled;
         private bool maximized;
+        private AddBookmark addbook;
         public MainWindow()
         {
             InitializeComponent();
@@ -24,7 +25,7 @@ namespace WebExpress
             {
                 WindowState = WindowState.Normal;
             }
-
+            
             Loaded += MainWindow_Loaded;
             WindowChrome wc = new WindowChrome();
             WindowChrome.SetWindowChrome(this, wc);
@@ -41,22 +42,17 @@ namespace WebExpress
             Menu.Visibility = Visibility.Hidden;
         }
 
-        private void TabBar_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                DragMove();
-            TabBar.CalcSizes();
-        }
-
         private void MainGrid_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Maximized)
             {
                 Grid.Margin = new Thickness(8);
+                TabBar.CalcSizes();
             }
             if (WindowState == WindowState.Normal)
             {
                 Grid.Margin = new Thickness(0);
+                TabBar.CalcSizes();
             }
         }
 
@@ -93,6 +89,12 @@ namespace WebExpress
                  Menu.Visibility = Visibility.Hidden;
                  menuToggled = false;
              };
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
     }
 

@@ -69,5 +69,14 @@ namespace WebExpress.Controls
                  Visibility = Visibility.Hidden;
              };
         }
+
+        private void AddonsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Extensions tv = new Extensions();
+            tv = new Extensions();
+            var converter = new BrushConverter();
+            var brush = (Brush)converter.ConvertFromString("#1abc9c");
+            mainWindow.TabBar.AddTab("Extensions", mainWindow, tv, brush);
+        }
     }
 }

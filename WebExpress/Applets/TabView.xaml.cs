@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using CefSharp;
@@ -26,7 +25,9 @@ namespace WebExpress
     {
         private readonly MainWindow mainWindow;
         private readonly char splitChar;
+        private bool refreshing;
         private System.Drawing.Color _color;
+        private AddBookmark addbook;
 
         private List<string> allItems1;
 
@@ -67,22 +68,46 @@ namespace WebExpress
 
         private string urlToLoad;
 
+        private BitmapImage backBtn;
+        private BitmapImage backBtnHover;
+        private BitmapImage forwardBtn;
+        private BitmapImage forwardBtnHover;
+        private BitmapImage refreshBtn;
+        private BitmapImage refreshBtnHover;
+        private BitmapImage menuBtn;
+        private BitmapImage menuBtnHover;
+        private BitmapImage bookmarkBtn;
+        private BitmapImage bookmarkBtnHover;
+        private BitmapImage stopBtn;
+        private BitmapImage closeBtn;
+
+
         public TabView(MainWindow mw, string url)
         {
             InitializeComponent();
-            WebView.FrameLoadEnd += WebView_FrameLoadEnd;
-            WebView.TitleChanged += WebView_TitleChanged;
+
+            //Assignments
+
             mainWindow = mw;
-            
-            allItems1 = new List<string>();
-            Loaded += TabView_Loaded;
             LastWebsite = "";
             WebView.LifeSpanHandler = this;
             splitChar = (char)42;
             WebView.DownloadHandler = this;
             WebView.DisplayHandler = this;
+            refreshing = false;
+            allItems1 = new List<string>();
+
+            //Events
+
+            WebView.FrameLoadEnd += WebView_FrameLoadEnd;
+            WebView.TitleChanged += WebView_TitleChanged;
+            Loaded += TabView_Loaded;
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
+            WebView.FrameLoadStart += WebView_FrameLoadStart;
+           
+           
             HideSuggestions();
+
             if (!Directory.Exists(Webexpresspath))
             {
                 Directory.CreateDirectory(Webexpresspath);
@@ -92,10 +117,219 @@ namespace WebExpress
             {
                 Directory.CreateDirectory(Userdatapath);
             }
+
             urlToLoad = url;
            
         }
 
+        private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                RefreshImage.Source = stopBtn;
+                refreshing = true;
+                startPage.Visibility = Visibility.Hidden;
+            });
+        }
+
+        private void whiteButtons()
+        {
+            //Buttons Images
+
+            //Back button
+
+            backBtn = new BitmapImage();
+            backBtn.BeginInit();
+            backBtn.UriSource = new Uri("pack://application:,,,/Resources/back_white.png");
+            backBtn.EndInit();
+
+            //Back button hover
+
+            backBtnHover = new BitmapImage();
+            backBtnHover.BeginInit();
+            backBtnHover.UriSource = new Uri("pack://application:,,,/Resources/back_hover_white.png");
+            backBtnHover.EndInit();
+
+            //Forward button
+
+            forwardBtn = new BitmapImage();
+            forwardBtn.BeginInit();
+            forwardBtn.UriSource = new Uri("pack://application:,,,/Resources/forward_white.png");
+            forwardBtn.EndInit();
+
+            //Forward button hover
+
+            forwardBtnHover = new BitmapImage();
+            forwardBtnHover.BeginInit();
+            forwardBtnHover.UriSource = new Uri("pack://application:,,,/Resources/forward_white_hover.png");
+            forwardBtnHover.EndInit();
+
+            //Refresh button
+
+            refreshBtn = new BitmapImage();
+            refreshBtn.BeginInit();
+            refreshBtn.UriSource = new Uri("pack://application:,,,/Resources/reload_white.png");
+            refreshBtn.EndInit();
+
+            //Refresh button hover
+
+            refreshBtnHover = new BitmapImage();
+            refreshBtnHover.BeginInit();
+            refreshBtnHover.UriSource = new Uri("pack://application:,,,/Resources/reload_hover_white.png");
+            refreshBtnHover.EndInit();
+
+            //Menu button
+
+            menuBtn = new BitmapImage();
+            menuBtn.BeginInit();
+            menuBtn.UriSource = new Uri("pack://application:,,,/Resources/menu_white.png");
+            menuBtn.EndInit();
+
+            //Menu button hover
+
+            menuBtnHover = new BitmapImage();
+            menuBtnHover.BeginInit();
+            menuBtnHover.UriSource = new Uri("pack://application:,,,/Resources/menu_hover_white.png");
+            menuBtnHover.EndInit();
+
+            //Bookmark button
+
+            bookmarkBtn = new BitmapImage();
+            bookmarkBtn.BeginInit();
+            bookmarkBtn.UriSource = new Uri("pack://application:,,,/Resources/bookmark_white.png");
+            bookmarkBtn.EndInit();
+
+            //Bookmark button hover
+
+            bookmarkBtnHover = new BitmapImage();
+            bookmarkBtnHover.BeginInit();
+            bookmarkBtnHover.UriSource = new Uri("pack://application:,,,/Resources/bookmark_hover_White.png");
+            bookmarkBtnHover.EndInit();
+
+            //Stop button
+
+            stopBtn = new BitmapImage();
+            stopBtn.BeginInit();
+            stopBtn.UriSource = new Uri("pack://application:,,,/Resources/stop_white.png");
+            stopBtn.EndInit();
+
+            //Close button
+            
+            closeBtn = new BitmapImage();
+            closeBtn.BeginInit();
+            closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab_white.png");
+            closeBtn.EndInit();
+
+            //Image set for buttons
+
+            BackImage.Source = backBtn;
+            ForwardImage.Source = forwardBtn;
+            RefreshImage.Source = refreshBtn;
+            MenuImage.Source = menuBtn;
+            BookmarkImage.Source = bookmarkBtn;
+            mainWindow.TabBar.getTabFromForm(this).CloseImage.Source = closeBtn;
+        }
+
+
+        private void blackButtons()
+        {
+            //Buttons Images
+
+            //Back button
+
+            backBtn = new BitmapImage();
+            backBtn.BeginInit();
+            backBtn.UriSource = new Uri("pack://application:,,,/Resources/back.png");
+            backBtn.EndInit();
+
+            //Back button hover
+
+            backBtnHover = new BitmapImage();
+            backBtnHover.BeginInit();
+            backBtnHover.UriSource = new Uri("pack://application:,,,/Resources/back_hover.png");
+            backBtnHover.EndInit();
+
+            //Forward button
+
+            forwardBtn = new BitmapImage();
+            forwardBtn.BeginInit();
+            forwardBtn.UriSource = new Uri("pack://application:,,,/Resources/forward.png");
+            forwardBtn.EndInit();
+
+            //Forward button hover
+
+            forwardBtnHover = new BitmapImage();
+            forwardBtnHover.BeginInit();
+            forwardBtnHover.UriSource = new Uri("pack://application:,,,/Resources/forward_hover.png");
+            forwardBtnHover.EndInit();
+
+            //Refresh button
+
+            refreshBtn = new BitmapImage();
+            refreshBtn.BeginInit();
+            refreshBtn.UriSource = new Uri("pack://application:,,,/Resources/reload.png");
+            refreshBtn.EndInit();
+
+            //Refresh button hover
+
+            refreshBtnHover = new BitmapImage();
+            refreshBtnHover.BeginInit();
+            refreshBtnHover.UriSource = new Uri("pack://application:,,,/Resources/reload_hover.png");
+            refreshBtnHover.EndInit();
+
+            //Menu button
+
+            menuBtn = new BitmapImage();
+            menuBtn.BeginInit();
+            menuBtn.UriSource = new Uri("pack://application:,,,/Resources/menu.png");
+            menuBtn.EndInit();
+
+            //Menu button hover
+
+            menuBtnHover = new BitmapImage();
+            menuBtnHover.BeginInit();
+            menuBtnHover.UriSource = new Uri("pack://application:,,,/Resources/menu_hover.png");
+            menuBtnHover.EndInit();
+
+            //Bookmark button
+
+            bookmarkBtn = new BitmapImage();
+            bookmarkBtn.BeginInit();
+            bookmarkBtn.UriSource = new Uri("pack://application:,,,/Resources/bookmark.png");
+            bookmarkBtn.EndInit();
+
+            //Bookmark button hover
+
+            bookmarkBtnHover = new BitmapImage();
+            bookmarkBtnHover.BeginInit();
+            bookmarkBtnHover.UriSource = new Uri("pack://application:,,,/Resources/bookmark_hover.png");
+            bookmarkBtnHover.EndInit();
+
+            //Stop button
+
+            stopBtn = new BitmapImage();
+            stopBtn.BeginInit();
+            stopBtn.UriSource = new Uri("pack://application:,,,/Resources/stop.png");
+            stopBtn.EndInit();
+
+            //Close button
+
+            closeBtn = new BitmapImage();
+            closeBtn.BeginInit();
+            closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab.png");
+            closeBtn.EndInit();
+
+
+            //Image set for buttons
+
+            BackImage.Source = backBtn;
+            ForwardImage.Source = forwardBtn;
+            RefreshImage.Source = refreshBtn;
+            MenuImage.Source = menuBtn;
+            BookmarkImage.Source = bookmarkBtn;
+            mainWindow.TabBar.getTabFromForm(this).CloseImage.Source = closeBtn;
+            
+        }
 
         private void WebView_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -112,7 +346,7 @@ namespace WebExpress
         private void TabView_Loaded(object sender, RoutedEventArgs e)
         {
             Task.Factory.StartNew(LoadSuggestions);
-
+            blackButtons();
         }
 
         private void LoadSuggestions()
@@ -205,9 +439,18 @@ namespace WebExpress
                 if (e.Frame.IsMain)
                 {
                     Task.Factory.StartNew(() => SetAddress(e.Url));
-                   
+                    RefreshImage.Source = stopBtn;
+                    refreshing = false;
                 }
-                Task.Factory.StartNew(WriteHistory);
+
+                    Task.Factory.StartNew(WriteHistory);
+                foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions"))
+                {
+                    if (System.IO.Path.GetExtension(file) == ".js")
+                    {
+                        WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
+                    }
+                }
             });
         }
 
@@ -228,8 +471,8 @@ namespace WebExpress
         {
             Color = new System.Windows.Media.Color { A = 255, R = 0, G = 0, B = 0 },
             Direction = -90,
-            ShadowDepth = 2.5,
-            Opacity = 0.125
+            ShadowDepth = 3.5,
+            Opacity = 0.1
         };
            ListContainer.Visibility = Visibility.Hidden;
         }
@@ -297,19 +540,25 @@ namespace WebExpress
 
         private void listBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            try
-            {
-                if (!listBox.SelectedItem.ToString().Equals(null))
+            try {
+                string[] split = listBox.SelectedItem.ToString().Split(splitChar);
+                if (!split[0].Contains("http://") | !split[0].Contains("https://"))
                 {
-                    string[] split = listBox.SelectedItem.ToString().Split(splitChar);
-                    WebView.Load(split[0]);
-                    HideSuggestions();
+                    string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
+                    WebView.Load("https://google.com/#q=" + split1[0]);
                 }
-            }
-            catch (Exception ex)
+
+                if (split[0].Contains("http://") | split[0].Contains("https://"))
+                {
+                    string[] split1 = listBox.SelectedItem.ToString().Split(new string[] { " - " }, StringSplitOptions.None);
+                    WebView.Load(split1[0]);
+                }
+                HideSuggestions();
+            } catch
             {
-                Console.WriteLine("Listbox mouse click error: " + ex.Message);
+
             }
+
         }
 
         private void WebView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -356,36 +605,39 @@ namespace WebExpress
         }
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
                     var bitmap2 = new BitmapImage();
-
+                try {
                     bitmap2.BeginInit();
                     bitmap2.UriSource = new Uri(urls[0], UriKind.Absolute);
-                System.Net.WebRequest request =
-      System.Net.WebRequest.Create(
-      urls[0]);
-                System.Net.WebResponse response = request.GetResponse();
-                System.IO.Stream responseStream =
-                    response.GetResponseStream();
-                Bitmap bmp = new Bitmap(responseStream);
-                System.Drawing.Color color = getDominantColor(bmp);
-                _color = color;
-                bitmap2.EndInit();
+                    System.Net.WebRequest request =
+                    System.Net.WebRequest.Create(urls[0]);
+                    System.Net.WebResponse response = await request.GetResponseAsync();
+                    System.IO.Stream responseStream =
+                        response.GetResponseStream();
+                    Bitmap bmp = new Bitmap(responseStream);
+                    System.Drawing.Color cc = getDominantColor(bmp);
+                    System.Drawing.Color c2 = System.Drawing.Color.FromArgb(cc.A, Convert.ToInt32(cc.R / 1), Convert.ToInt32(cc.G / 1), Convert.ToInt32(cc.B / 1));
+                    _color = c2;
+                    bitmap2.EndInit();
 
-                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(c2.A, c2.R, c2.G, c2.B);
                     SolidColorBrush brush = new SolidColorBrush(newColor);
                     mainWindow.TabBar.getTabFromForm(this).Color = brush;
                     mainWindow.TabBar.getTabFromForm(this).refreshColor();
-                    
+
                     textBox.Background = brush;
                     Panel.Background = brush;
-                    
+
                     mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
-                  
-                    ContrastColor(color);
+
+                    ContrastColor(c2);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine("Favicon: " + ex.Message);
+                }
             });
-            Console.WriteLine("changed");
         }
         void ContrastColor(System.Drawing.Color color)
         {
@@ -400,12 +652,16 @@ namespace WebExpress
                 mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.Black;
                 textBox.Foreground = System.Windows.Media.Brushes.Black;
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
+                blackButtons();
+                mainWindow.TabBar.getTabFromForm(this).darkColor = false;
             }
             else {
                 if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
                     mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.White;
                 textBox.Foreground = System.Windows.Media.Brushes.White;
+                whiteButtons();
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.White;
+                mainWindow.TabBar.getTabFromForm(this).darkColor = true;
             }
          
         }
@@ -536,6 +792,69 @@ namespace WebExpress
 
         public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
         {
+            
+        }
+
+        private void Back_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackImage.Source = backBtnHover;
+        }
+
+        private void Back_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackImage.Source = backBtn;
+        }
+
+        private void Forward_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ForwardImage.Source = forwardBtnHover;
+        }
+
+        private void Forward_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ForwardImage.Source = forwardBtn;
+        }
+
+        private void Refresh_MouseEnter(object sender, MouseEventArgs e)
+        {
+            RefreshImage.Source = refreshBtnHover;
+        }
+
+        private void Refresh_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RefreshImage.Source = refreshBtn;
+        }
+
+        private void MenuButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            MenuImage.Source = menuBtnHover;
+        }
+
+        private void MenuButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            MenuImage.Source = menuBtn;
+        }
+
+        private void BookmarkButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BookmarkImage.Source = bookmarkBtnHover;
+        }
+
+        private void BookmarkButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BookmarkImage.Source = bookmarkBtn;
+        }
+
+        private void BookmarkButton_Click(object sender, RoutedEventArgs e)
+        {
+          
+                addbook = new AddBookmark(Title, WebView.Address, mainWindow);
+                addbook.HorizontalAlignment = HorizontalAlignment.Right;
+                addbook.VerticalAlignment = VerticalAlignment.Top;
+                addbook.Margin = new Thickness(0, 30, 0, 0);
+                addbook.Width = 300;
+                addbook.Height = 175;
+                container.Children.Add(addbook);
             
         }
     }
