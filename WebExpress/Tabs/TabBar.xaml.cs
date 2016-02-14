@@ -35,7 +35,7 @@ namespace WebExpress
 
         public void AddTab(string title, MainWindow mw, UserControl userControl, Brush brush)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 tab = new Tab(title, mw, userControl, brush);
 
@@ -80,7 +80,7 @@ namespace WebExpress
 
                 CalcSizes();
                 mainWindow = mw;
-            });
+            }));
         }
         public Tab getTabFromForm(UserControl form)
         {

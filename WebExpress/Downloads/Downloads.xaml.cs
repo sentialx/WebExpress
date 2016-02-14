@@ -37,7 +37,7 @@ namespace WebExpress
 
         public void AddDownload(string url, string filepath, string filename)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
            {
                Item = new DownloadItem(filepath, url, filename);
                Item.Width = Content.ActualWidth;
@@ -47,7 +47,7 @@ namespace WebExpress
                Items.Add(Item);
                this.Height = MarginTop + Items.Count * ItemHeight;
                ItemsCount += 1;
-           });
+           }));
         }
 
         private void button_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -61,7 +61,7 @@ namespace WebExpress
             canvas.Children.Remove(di);
             ItemsCount = 0;
 
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 foreach (DownloadItem Item in Items)
                 {
@@ -71,7 +71,7 @@ namespace WebExpress
                     this.Height = MarginTop + Items.Count * ItemHeight;
                     ItemsCount += 1;
                 }
-            });
+            }));
         }
     }
 }

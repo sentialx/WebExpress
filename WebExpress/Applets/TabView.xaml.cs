@@ -56,6 +56,7 @@ namespace WebExpress
         public string Webexpresspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress");
 
+        private bool alreadyFocused;
         private string urlToLoad;
         private string Title;
         private string LastWebsite;
@@ -114,8 +115,7 @@ namespace WebExpress
             Loaded += TabView_Loaded;
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
             WebView.FrameLoadStart += WebView_FrameLoadStart;
-           
-           
+
             HideSuggestions();
 
             if (!Directory.Exists(Webexpresspath))
@@ -134,12 +134,12 @@ namespace WebExpress
 
         private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 RefreshImage.Source = stopBtn;
                 refreshing = true;
                 startPage.Visibility = Visibility.Hidden;
-            });
+            }));
         }
 
         private void whiteButtons()
@@ -363,7 +363,7 @@ namespace WebExpress
 
         private void LoadSuggestions()
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 try
                 {
@@ -399,11 +399,11 @@ namespace WebExpress
                 {
                     Console.WriteLine("Load suggestions error: " + ex.Message);
                 }
-            });
+            }));
         }
         public void WriteHistory()
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 if (!File.Exists(Historypath))
                 {
@@ -420,7 +420,7 @@ namespace WebExpress
                         sw.Close();
                     }
                 }
-                if (!LastWebsite.Equals(WebView.Address) | !WebView.Address.Contains(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\WebExpress\\user data\\history-data.html"))
+                if (!LastWebsite.Equals(WebView.Address) && !Title.Contains("WebExpress - history") && !Title.Contains("WebExpress - bookmarks"))
                     try {
                         {
                             string strFileContents = "";
@@ -450,7 +450,7 @@ namespace WebExpress
                     {
 
                     }
-            });
+            }));
         }
 
 
@@ -486,7 +486,7 @@ namespace WebExpress
 
         private void SetAddress(string text)
         {
-            Dispatcher.Invoke(() => { textBox.Text = text; });
+            Dispatcher.BeginInvoke((Action) (() => { textBox.Text = text; }));
         }
 
         public void Shutdown()
@@ -517,8 +517,9 @@ namespace WebExpress
                     if (allitems[i].Contains(textBox.Text))
                     {
                         listBox.Items.Add(allitems[i]);
-                        ListContainer.Height = listBox.Items.Count*34;
+                      
                     }
+                    ListContainer.Height = listBox.Items.Count * 34;
                 }
             }
             catch (Exception ex)
@@ -637,7 +638,7 @@ namespace WebExpress
         }
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
-            Dispatcher.Invoke((Action)(async () =>
+            Dispatcher.BeginInvoke((Action)(async () =>
             {
                 var bitmap2 = new BitmapImage();
                 try
@@ -653,6 +654,7 @@ namespace WebExpress
                     System.Drawing.Color cc = getDominantColor(bmp);
                     System.Drawing.Color c2 = System.Drawing.Color.FromArgb(cc.A, Convert.ToInt32(cc.R / 1), Convert.ToInt32(cc.G / 1), Convert.ToInt32(cc.B / 1));
                     _color = c2;
+                    
                     bitmap2.EndInit();
 
                     System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(c2.A, c2.R, c2.G, c2.B);
@@ -662,7 +664,8 @@ namespace WebExpress
 
                     textBox.Background = brush;
                     Panel.Background = brush;
-
+                    ListContainer.Background = brush;
+                    listBox.Background = brush;
                     mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
 
                     ContrastColor(c2);
@@ -690,6 +693,7 @@ namespace WebExpress
                 SolidColorBrush scb = new SolidColorBrush();
                 scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
                 textBox.Background = scb;
+                listBox.Foreground = System.Windows.Media.Brushes.Black;
                 mainWindow.TabBar.getTabFromForm(this).darkColor = false;
             }
             else {
@@ -697,6 +701,7 @@ namespace WebExpress
                     mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.White;
                 textBox.Foreground = System.Windows.Media.Brushes.White;
                 whiteButtons();
+                listBox.Foreground = System.Windows.Media.Brushes.White;
                 SolidColorBrush scb = new SolidColorBrush();
                 scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
                 textBox.Background = scb;
@@ -796,7 +801,7 @@ namespace WebExpress
 
         public void OnBeforeDownload(IBrowser browser, CefSharp.DownloadItem downloadItem, IBeforeDownloadCallback callback)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.BeginInvoke((Action)(() =>
             {
                 mainWindow.Downloads1.AddDownload(downloadItem.Url, Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), downloadItem.SuggestedFileName);
                 mainWindow.Downloads1.Visibility = Visibility.Visible;
@@ -816,7 +821,7 @@ namespace WebExpress
         public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IWindowInfo windowInfo, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
             newBrowser = null;
-            Dispatcher.Invoke((Action)(() => {
+            Dispatcher.BeginInvoke((Action)(() => {
                 
 
                 TabView tv = new TabView(mainWindow, targetUrl);
@@ -902,5 +907,13 @@ namespace WebExpress
                 container.Children.Add(addbook);
             
         }
+
+
+
+        private void textBox_GotMouseCapture(object sender, MouseEventArgs e)
+        {
+            textBox.SelectAll();
+        }
+
     }
 }

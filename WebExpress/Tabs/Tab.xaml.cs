@@ -48,7 +48,7 @@ namespace WebExpress
 
         public Tab(string title, MainWindow mw, UserControl uc, System.Windows.Media.Brush brush)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 darkColor = false;
                 InitializeComponent();
@@ -62,13 +62,13 @@ namespace WebExpress
                 mainWindow = mw;
                 closeTabMargin = 8;
                 favIconMargin = 6;
-            });
+            }));
         }
 
         private void Tab_Loaded(object sender, RoutedEventArgs e)
         {
 
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 Canvas parentForm = this.Parent as Canvas;
                 Grid parentForm2 = parentForm.Parent as Grid;
@@ -87,7 +87,7 @@ namespace WebExpress
                     label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
                 }
                 label_TabTitle.Margin = new Thickness(6, 1, 0, 0);
-            });
+            }));
         }
 
         public bool bgTab
@@ -125,7 +125,7 @@ namespace WebExpress
         delegate void GetFavDelegate(BitmapImage icon);
         public void SetIcon(BitmapImage icon)
         {
-            this.Dispatcher.Invoke((Action) (() =>
+            this.Dispatcher.BeginInvoke((Action) (() =>
             {
                 label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin);
                 label_TabTitle.Margin = new Thickness(FavIcon.Width + 6, 1, 0, 0);

@@ -31,7 +31,7 @@
         <local:StartPage x:Name="startPage" Margin="0,30,0,0">
 
         </local:StartPage>
-        <wpf:ChromiumWebBrowser x:Name="WebView" Margin="0,30,0,0" PreviewMouseDown="WebView_PreviewMouseDown">
+        <wpf:ChromiumWebBrowser x:Name="WebView" Margin="0,42,0,0" PreviewMouseDown="WebView_PreviewMouseDown">
 
             <wpf:ChromiumWebBrowser.ContextMenu>
                 <ContextMenu>
@@ -63,7 +63,7 @@
                 <Grid.Effect>
                     <DropShadowEffect ShadowDepth="1.5" Direction="-90" Opacity="0.2"/>
                 </Grid.Effect>
-                <TextBox Padding="10,5,0,0" x:Name="textBox" HorizontalAlignment="Stretch" Margin="130,4,102,4" VerticalAlignment="Stretch" KeyDown="textBox_KeyDown" BorderThickness="0" PreviewKeyDown="textBox_PreviewKeyDown" Background="White"  Height="28" BorderBrush="{x:Null}"/>
+                <TextBox Padding="10,5,0,0" x:Name="textBox" HorizontalAlignment="Stretch" Margin="130,4,102,4" VerticalAlignment="Stretch" KeyDown="textBox_KeyDown" BorderThickness="0" PreviewKeyDown="textBox_PreviewKeyDown" Background="White"  Height="28" BorderBrush="{x:Null}" GotMouseCapture="textBox_GotMouseCapture"/>
             </Grid>
             <Button Style="{StaticResource MyButtonStyle}" x:Name="Back" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" Click="Back_Click" MouseEnter="Back_MouseEnter" MouseLeave="Back_MouseLeave">
                 <StackPanel Orientation="Horizontal">

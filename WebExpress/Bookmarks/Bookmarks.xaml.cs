@@ -56,7 +56,7 @@ namespace WebExpress.Bookmarks
                     }
                     if (RowsCount >= 3)
                     {
-                        mainCanvas.Height = (RowsCount + 1) * 100;
+                        mainCanvas.Height = (RowsCount + 1) * 110;
                     }
 
                

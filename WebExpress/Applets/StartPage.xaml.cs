@@ -31,7 +31,7 @@ namespace WebExpress
         }
         public void loadFavs(MainWindow mw)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 try {
                     string[] readText = System.IO.File.ReadAllLines(Bookspath);
@@ -51,7 +51,7 @@ namespace WebExpress
                 {
                     Console.WriteLine("LoadFavs error: " + ex.Message);
                 }
-            });
+            }));
         }
         private void StartPage_Loaded(object sender, RoutedEventArgs e)
         {

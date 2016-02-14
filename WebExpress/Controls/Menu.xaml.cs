@@ -19,21 +19,6 @@ namespace WebExpress.Controls
             
         }
 
-        private void SettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var converter = new BrushConverter();
-            var brush = (Brush)converter.ConvertFromString("#1abc9c");
-            mainWindow.TabBar.AddTab("Settings", mainWindow, new Settings(mainWindow), brush);
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
-
-                 Visibility = Visibility.Hidden;
-             };
-        }
 
         private void DownloadsButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -68,6 +53,23 @@ namespace WebExpress.Controls
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            Storyboard sb = this.FindResource("sb") as Storyboard;
+            Storyboard.SetTarget(sb, this);
+            sb.Begin();
+            sb.Completed +=
+             (o, e1) =>
+             {
+
+                 Visibility = Visibility.Hidden;
+             };
+        }
+        private void SettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Settings tv = new Settings(mainWindow);
+
+            var converter = new BrushConverter();
+            var brush = (Brush)converter.ConvertFromString("#1abc9c");
+            mainWindow.TabBar.AddTab("Settings", mainWindow, tv, brush);
             Storyboard sb = this.FindResource("sb") as Storyboard;
             Storyboard.SetTarget(sb, this);
             sb.Begin();

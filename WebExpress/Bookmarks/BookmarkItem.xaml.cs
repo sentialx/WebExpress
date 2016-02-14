@@ -59,7 +59,7 @@ namespace WebExpress.Bookmarks
 
         private void DoInBackground()
         {
-            Dispatcher.Invoke(async () =>
+            Dispatcher.BeginInvoke((Action) (async () =>
             {
                 HttpWebRequest request =
     (HttpWebRequest)HttpWebRequest.Create("http://www.google.com/s2/favicons?domain=" + _url);
@@ -76,7 +76,7 @@ namespace WebExpress.Bookmarks
                 image.Source = bitmap2;
                 var foreColor = (PerceivedBrightness(ToMediaColor(bmp.GetPixel(11, 11))) > 130 ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.White);
                 label.Foreground = foreColor;
-            });
+            }));
        
         }
 
@@ -147,7 +147,7 @@ namespace WebExpress.Bookmarks
         }
         public void loadFavs(MainWindow mw)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke((Action) (() =>
             {
                 bookmarks.ItemsCount = 0;
                 bookmarks.RowsCount = 0;
@@ -177,7 +177,7 @@ namespace WebExpress.Bookmarks
                 {
                     Console.WriteLine("LoadFavs error: " + ex.Message);
                 }
-            });
+            }));
         }
         private void close_click(object sender, RoutedEventArgs e)
         {

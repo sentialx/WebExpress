@@ -21,12 +21,14 @@ namespace WebExpress.Applets
 
         private void Settings_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            var converter = new BrushConverter();
-            var brush = (System.Windows.Media.Brush)converter.ConvertFromString("#1abc9c");
-            mainWindow.TabBar.getTabFromForm(this).Background = brush;
-            dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
-            comboBox.Text = dyn.SE;
-            textBox.Text = dyn.Start;
+            try {
+                dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+                comboBox.Text = dyn.SE;
+                textBox.Text = dyn.Start;
+            } catch
+            {
+
+            }
         }
 
         private void Grid_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
