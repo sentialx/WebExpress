@@ -16,21 +16,14 @@ using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace WebExpress
 {
-    /// <summary>
-    ///     Interaction logic for TabView.xaml
-    /// </summary>
     public partial class TabView : UserControl, IDisplayHandler, IDownloadHandler, ILifeSpanHandler
     {
-        private readonly MainWindow mainWindow;
-        private readonly char splitChar;
-        private bool refreshing;
-        private System.Drawing.Color _color;
-        private AddBookmark addbook;
 
-        private List<string> allItems1;
+        //Declarations
 
         public string Bookmarkslayoutpath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -52,13 +45,9 @@ namespace WebExpress
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history-data.html");
 
-        private string LastWebsite;
-
         public string Suggestionspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\suggestions.txt");
-
-        private string Title;
 
         public string Userdatapath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -68,6 +57,14 @@ namespace WebExpress
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress");
 
         private string urlToLoad;
+        private string Title;
+        private string LastWebsite;
+        private readonly MainWindow mainWindow;
+        private readonly char splitChar;
+        private bool refreshing;
+        private System.Drawing.Color _color;
+        private AddBookmark addbook;
+        private List<string> allItems1;
 
         private BitmapImage backBtn;
         private BitmapImage backBtnHover;
@@ -93,8 +90,20 @@ namespace WebExpress
             LastWebsite = "";
             WebView.LifeSpanHandler = this;
             splitChar = (char)42;
+            CefSettings s = new CefSettings();
+            s.CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cache");
+            CefSharp.Cef.GetGlobalCookieManager().SetStoragePath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cookies"), true);
+            s.UserDataPath = Userdatapath;
+            s.BrowserSubprocessPath = "we.exe";
+            s.PersistSessionCookies = true;
             WebView.DownloadHandler = this;
             WebView.DisplayHandler = this;
+            BrowserSettings s1 = new BrowserSettings();
+            s1.LocalStorage = CefState.Enabled;
+            s1.Databases = CefState.Enabled;
+            s1.ApplicationCache = CefState.Enabled;
+            s1.WindowlessFrameRate = 60;
+            WebView.BrowserSettings = s1;
             refreshing = false;
             allItems1 = new List<string>();
 
@@ -336,6 +345,7 @@ namespace WebExpress
         {
             if(!WebView.IsInitialized)
             {
+
                 Cef.Initialize();
             }
             if (WebView.IsInitialized)
@@ -348,6 +358,7 @@ namespace WebExpress
         {
             Task.Factory.StartNew(LoadSuggestions);
             blackButtons();
+            startPage.loadFavs(mainWindow);
         }
 
         private void LoadSuggestions()
@@ -394,6 +405,10 @@ namespace WebExpress
         {
             Dispatcher.Invoke(() =>
             {
+                if (!File.Exists(Historypath))
+                {
+                    File.Create(Historypath);
+                }
                     if (!File.Exists(Historylayoutpath))
                     {
 
@@ -405,23 +420,35 @@ namespace WebExpress
                         sw.Close();
                     }
                 }
-                if (!LastWebsite.Equals(WebView.Address))
-                    {       
-                    using (var sw = new StreamWriter(Historypath, true))
-                    {
-                        sw.WriteLine(
-                            "<style>p { font-family: 'Arial'; } a {color: #606060; text-decoration: none;} a:hover { color: #000; } a:visited { color:#606060; } </style><p><img src='http://www.google.com/s2/favicons?domain=" +
-                            WebView.Address + "' style='width: 16; height:16;'/>" + " " + Title +
-                            "  <a target='_blank' href=" + WebView.Address + ">  -  " + WebView.Address + "</a></p>");
-                        sw.Close();
-                    }
-                    var filePath1 = Suggestionspath;
-                        using (var sw = new StreamWriter(filePath1, true))
+                if (!LastWebsite.Equals(WebView.Address) | !WebView.Address.Contains(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\WebExpress\\user data\\history-data.html"))
+                    try {
                         {
-                            sw.WriteLine(WebView.Address + splitChar + Title);
-                            sw.Close();
+                            string strFileContents = "";
+                            string strDataToAppend = "<style>p { font-family: 'Arial'; } a {color: #606060; text-decoration: none;} a:hover { color: #000; } a:visited { color:#606060; } </style><p><img src='http://www.google.com/s2/favicons?domain=" +
+                                WebView.Address + "' style='width: 16; height:16;'/>" + " " + Title +
+                                "  <a target='_blank' href=" + WebView.Address + ">  -  " + WebView.Address + "</a></p>";
+                            StreamReader srReader = null;
+                            StreamWriter swWriter = null;
+                            srReader = new StreamReader(Historypath);
+                            strFileContents = srReader.ReadToEnd();
+                            srReader.Close();
+
+                            strFileContents = strDataToAppend + Environment.NewLine + strFileContents;
+                            swWriter = new StreamWriter(Historypath, false);
+                            swWriter.Write(strFileContents);
+                            swWriter.Flush();
+
+                            var filePath1 = Suggestionspath;
+                            using (var sw = new StreamWriter(filePath1, true))
+                            {
+                                sw.WriteLine(WebView.Address + splitChar + Title);
+                                sw.Close();
+                            }
+                            LastWebsite = WebView.Address;
                         }
-                        LastWebsite = WebView.Address;
+                    } catch
+                    {
+
                     }
             });
         }
@@ -442,16 +469,18 @@ namespace WebExpress
                     Task.Factory.StartNew(() => SetAddress(e.Url));
                     RefreshImage.Source = stopBtn;
                     refreshing = false;
+                    foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions"))
+                    {
+                        if (System.IO.Path.GetExtension(file) == ".js")
+                        {
+                            WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
+                        }
+                    }
                 }
 
                     Task.Factory.StartNew(WriteHistory);
-                foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions"))
-                {
-                    if (System.IO.Path.GetExtension(file) == ".js")
-                    {
-                        WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
-                    }
-                }
+                Task.Factory.StartNew(LoadSuggestions);
+
             });
         }
 
@@ -467,14 +496,6 @@ namespace WebExpress
 
         private void HideSuggestions()
         {
-        Panel.Effect =
-        new DropShadowEffect
-        {
-            Color = new System.Windows.Media.Color { A = 255, R = 0, G = 0, B = 0 },
-            Direction = -90,
-            ShadowDepth = 3.5,
-            Opacity = 0.1
-        };
            ListContainer.Visibility = Visibility.Hidden;
         }
         private void ShowSuggestions()
@@ -517,8 +538,14 @@ namespace WebExpress
                 }
                 else
                 {
-                    textBox.Text = textBox.Text.Replace(textBox.Text, "http://google.com/#q=" + textBox.Text);
-                    WebView.Load(textBox.Text);
+                    dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+                    if (Convert.ToString(dyn.SE) == "Google")
+                    {
+                        
+                        textBox.Text = textBox.Text.Replace(textBox.Text, "http://google.com/#q=" + textBox.Text);
+                        WebView.Load(textBox.Text);
+                    }
+                    
                 }
                 HideSuggestions();
             }
@@ -546,7 +573,11 @@ namespace WebExpress
                 if (!split[0].Contains("http://") | !split[0].Contains("https://"))
                 {
                     string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
-                    WebView.Load("https://google.com/#q=" + split1[0]);
+                    dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+                    if (dyn.SE == "Google")
+                    {
+                        WebView.Load("https://google.com/#q=" + split1[0]);
+                    }
                 }
 
                 if (split[0].Contains("http://") | split[0].Contains("https://"))
@@ -656,6 +687,9 @@ namespace WebExpress
                 textBox.Foreground = System.Windows.Media.Brushes.Black;
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
                 blackButtons();
+                SolidColorBrush scb = new SolidColorBrush();
+                scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
+                textBox.Background = scb;
                 mainWindow.TabBar.getTabFromForm(this).darkColor = false;
             }
             else {
@@ -663,6 +697,9 @@ namespace WebExpress
                     mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.White;
                 textBox.Foreground = System.Windows.Media.Brushes.White;
                 whiteButtons();
+                SolidColorBrush scb = new SolidColorBrush();
+                scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
+                textBox.Background = scb;
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.White;
                 mainWindow.TabBar.getTabFromForm(this).darkColor = true;
             }
@@ -671,6 +708,7 @@ namespace WebExpress
 
         public void OnFullscreenModeChange(IWebBrowser browserControl, IBrowser browser, bool fullscreen)
         {
+            fullscreen = true;
         }
 
         public bool OnTooltipChanged(IWebBrowser browserControl, string text)
@@ -719,7 +757,11 @@ namespace WebExpress
                     if (!split[0].Contains("http://") | !split[0].Contains("https://"))
                     {
                         string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
-                        WebView.Load("https://google.com/#q=" + split1[0]);
+                        dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+                        if (dyn.SE == "Google")
+                        {
+                            WebView.Load("https://google.com/#q=" + split1[0]);
+                        }
                     }
                     
                     if (split[0].Contains("http://") | split[0].Contains("https://"))
@@ -756,7 +798,7 @@ namespace WebExpress
         {
             Dispatcher.Invoke((Action)(() =>
             {
-                mainWindow.Downloads1.AddDownload(downloadItem.Url, "C:\\Users\\Sential\\Downloads\\", downloadItem.SuggestedFileName);
+                mainWindow.Downloads1.AddDownload(downloadItem.Url, Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), downloadItem.SuggestedFileName);
                 mainWindow.Downloads1.Visibility = Visibility.Visible;
             }));
         }
@@ -778,7 +820,7 @@ namespace WebExpress
                 
 
                 TabView tv = new TabView(mainWindow, targetUrl);
-                mainWindow.TabBar.AddTab("New tab", mainWindow, tv, System.Windows.Media.Brushes.White);
+                mainWindow.TabBar.AddTab("New tab", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
             }));
                 return true;
         }

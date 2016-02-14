@@ -61,6 +61,8 @@ namespace WebExpress
             catch
             {
             }
+            Grid parent = this.Parent as Grid;
+            parent.Children.Remove(this);
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)

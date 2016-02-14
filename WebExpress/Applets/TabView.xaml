@@ -43,11 +43,11 @@
             </wpf:ChromiumWebBrowser.ContextMenu>
         </wpf:ChromiumWebBrowser>
 
-        <Grid  x:Name="ListContainer" MaxHeight="135" Height="229" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="White" Margin="0,30,0,0" >
+        <Grid  x:Name="ListContainer" MaxHeight="135" Height="229" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="#FFF9F9F9" Margin="0,42,0,0" >
             <Grid.Effect>
                 <DropShadowEffect Opacity="0.2" Direction="-90" ShadowDepth="0" BlurRadius="12.5"/>
             </Grid.Effect>
-            <ListBox x:Name="listBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{x:Null}" PreviewMouseLeftButtonDown="listBox_PreviewMouseLeftButtonDown" PreviewKeyDown="listBox_PreviewKeyDown">
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" x:Name="listBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{x:Null}" PreviewMouseLeftButtonDown="listBox_PreviewMouseLeftButtonDown" PreviewKeyDown="listBox_PreviewKeyDown" Background="#FFF9F9F9">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Height" Value="32" />
@@ -58,34 +58,36 @@
 
         </Grid>
         
-        <Grid x:Name="Panel" Height="30" VerticalAlignment="Top" Background="White">
-            <Grid.Effect>
-                <DropShadowEffect Direction="-90" Opacity="0.05" BlurRadius="15" ShadowDepth="3"/>
-            </Grid.Effect>
-            <TextBox x:Name="textBox" HorizontalAlignment="Stretch" Margin="131,8,101,6" TextWrapping="Wrap" VerticalAlignment="Stretch" KeyDown="textBox_KeyDown" BorderThickness="0" PreviewKeyDown="textBox_PreviewKeyDown" Background="White"  />
-            <Button Style="{StaticResource MyButtonStyle}" x:Name="Back" Width="30" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" Click="Back_Click" MouseEnter="Back_MouseEnter" MouseLeave="Back_MouseLeave">
+        <Grid x:Name="Panel" Height="42" VerticalAlignment="Top" Background="#FFF9F9F9">
+            <Grid>
+                <Grid.Effect>
+                    <DropShadowEffect ShadowDepth="1.5" Direction="-90" Opacity="0.2"/>
+                </Grid.Effect>
+                <TextBox Padding="10,5,0,0" x:Name="textBox" HorizontalAlignment="Stretch" Margin="130,4,102,4" VerticalAlignment="Stretch" KeyDown="textBox_KeyDown" BorderThickness="0" PreviewKeyDown="textBox_PreviewKeyDown" Background="White"  Height="28" BorderBrush="{x:Null}"/>
+            </Grid>
+            <Button Style="{StaticResource MyButtonStyle}" x:Name="Back" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" Click="Back_Click" MouseEnter="Back_MouseEnter" MouseLeave="Back_MouseLeave">
                 <StackPanel Orientation="Horizontal">
-                    <Image x:Name="BackImage" Source="pack://application:,,,/Resources/back.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8"/>
+                    <Image x:Name="BackImage" Source="pack://application:,,,/Resources/back.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource MyButtonStyle}" x:Name="Forward" Width="30" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="43,0,0,0" Click="Forward_Click" MouseEnter="Forward_MouseEnter" MouseLeave="Forward_MouseLeave">
+            <Button Style="{StaticResource MyButtonStyle}" x:Name="Forward" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="43,0,0,0" Click="Forward_Click" MouseEnter="Forward_MouseEnter" MouseLeave="Forward_MouseLeave">
                 <StackPanel Orientation="Horizontal">
-                    <Image x:Name="ForwardImage" Source="pack://application:,,,/Resources/forward.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8"/>
+                    <Image x:Name="ForwardImage" Source="pack://application:,,,/Resources/forward.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource MyButtonStyle}" x:Name="Refresh" Width="30" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="81,0,0,0" Click="Refresh_Click" MouseEnter="Refresh_MouseEnter" MouseLeave="Refresh_MouseLeave">
+            <Button Style="{StaticResource MyButtonStyle}" x:Name="Refresh" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="81,0,0,0" Click="Refresh_Click" MouseEnter="Refresh_MouseEnter" MouseLeave="Refresh_MouseLeave">
                 <StackPanel Orientation="Horizontal">
-                    <Image x:Name="RefreshImage" Source="pack://application:,,,/Resources/reload.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8"/>
+                    <Image x:Name="RefreshImage" Source="pack://application:,,,/Resources/reload.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource MyButtonStyle}" x:Name="MenuButton" Width="30" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,15,4" Click="MenuButton_Click" MouseEnter="MenuButton_MouseEnter" MouseLeave="MenuButton_MouseLeave" >
+            <Button Style="{StaticResource MyButtonStyle}" x:Name="MenuButton" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,15,4" Click="MenuButton_Click" MouseEnter="MenuButton_MouseEnter" MouseLeave="MenuButton_MouseLeave" >
                 <StackPanel Orientation="Horizontal">
-                    <Image x:Name="MenuImage" Source="pack://application:,,,/Resources/menu.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8"/>
+                    <Image x:Name="MenuImage" Source="pack://application:,,,/Resources/menu.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource MyButtonStyle}" x:Name="BookmarkButton" Width="30" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,53,0" Click="BookmarkButton_Click" MouseEnter="BookmarkButton_MouseEnter" MouseLeave="BookmarkButton_MouseLeave" >
+            <Button Style="{StaticResource MyButtonStyle}" x:Name="BookmarkButton" Width="42" Height="42" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,53,0" Click="BookmarkButton_Click" MouseEnter="BookmarkButton_MouseEnter" MouseLeave="BookmarkButton_MouseLeave" >
                 <StackPanel Orientation="Horizontal">
-                    <Image x:Name="BookmarkImage" Source="pack://application:,,,/Resources/bookmark.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8"/>
+                    <Image x:Name="BookmarkImage" Source="pack://application:,,,/Resources/bookmark.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14"/>
                 </StackPanel>
             </Button>
         </Grid>

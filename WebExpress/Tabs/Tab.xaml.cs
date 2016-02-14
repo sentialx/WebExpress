@@ -140,6 +140,13 @@ namespace WebExpress
 
         private void button_close_Click(object sender, RoutedEventArgs e)
         {
+            try {
+                Applets.Settings s = form as Applets.Settings;
+                s.SaveSettings();
+            } catch
+            {
+
+            }
            Canvas parentForm = this.Parent as Canvas;
             Grid parentForm2 = parentForm.Parent as Grid;
            TabBar parentForm3 = parentForm2.Parent as TabBar;

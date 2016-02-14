@@ -116,10 +116,10 @@
     <Compile Include="Applets\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions.xaml.cs">
+    <Compile Include="Extensions\Extensions.xaml.cs">
       <DependentUpon>Extensions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extension.xaml.cs">
+    <Compile Include="Extensions\Extension.xaml.cs">
       <DependentUpon>Extension.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\TabBar.xaml.cs">
@@ -160,11 +160,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Extensions.xaml">
+    <Page Include="Extensions\Extensions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Extension.xaml">
+    <Page Include="Extensions\Extension.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -273,9 +273,7 @@
     <Resource Include="Resources\stop.png" />
     <Resource Include="Resources\stop_white.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

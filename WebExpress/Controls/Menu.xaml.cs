@@ -54,7 +54,7 @@ namespace WebExpress.Controls
             TabView tv = new TabView(mainWindow, "mw");
             tv = new TabView(mainWindow, "file://" + tv.Historylayoutpath);
             Console.WriteLine(tv.Historylayoutpath);
-            mainWindow.TabBar.AddTab("History", mainWindow, tv, Brushes.White);
+            mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
             Storyboard sb = this.FindResource("sb") as Storyboard;
             Storyboard.SetTarget(sb, this);
             sb.Begin();
@@ -86,6 +86,23 @@ namespace WebExpress.Controls
             var converter = new BrushConverter();
             var brush = (Brush)converter.ConvertFromString("#1abc9c");
             mainWindow.TabBar.AddTab("Extensions", mainWindow, tv, brush);
+            Storyboard sb = this.FindResource("sb") as Storyboard;
+            Storyboard.SetTarget(sb, this);
+            sb.Begin();
+            sb.Completed +=
+             (o, e1) =>
+             {
+
+                 Visibility = Visibility.Hidden;
+             };
+        }
+
+        private void BookmarksButton_Click(object sender, RoutedEventArgs e)
+        {
+            TabView tv = new TabView(mainWindow, "mw");
+            tv = new TabView(mainWindow, "file://" + tv.Bookmarkslayoutpath);
+            Console.WriteLine(tv.Historylayoutpath);
+            mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
             Storyboard sb = this.FindResource("sb") as Storyboard;
             Storyboard.SetTarget(sb, this);
             sb.Begin();

@@ -5,10 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress.Bookmarks"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="White">
-        <Canvas x:Name="canvas">
+             d:DesignHeight="500" d:DesignWidth="300">
+    <Grid>
+
+
+        <ScrollViewer ScrollViewer.CanContentScroll="True" Height="310" x:Name="scrollView" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Canvas x:Name="mainCanvas" SizeChanged="canvas_SizeChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             
-        </Canvas> 
+               
+            
+        </Canvas>
+           
+        
+        </ScrollViewer>
+
+
     </Grid>
 </UserControl>

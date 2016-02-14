@@ -8,10 +8,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="400.5" d:DesignWidth="808.5">
     <Grid>
-        <Grid x:Name="BookContainer" Height="200" Margin="50,0,50,0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+        <Grid x:Name="BookContainer" Height="372" Width="600" VerticalAlignment="Center" HorizontalAlignment="Stretch">
             <Label x:Name="label" Content="Bookmarks" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="21.333"/>
 
-            <Bookmarks:Bookmarks x:Name="bookmarks" HorizontalAlignment="Left" Height="100" Margin="10,53,0,0" VerticalAlignment="Top" Width="788" Background="White"/>
+            <Bookmarks:Bookmarks x:Name="bookmarks" HorizontalAlignment="Stretch" Height="320" Width="550" Margin="15,53,15,0" VerticalAlignment="Top" Background="White"/>
 
         </Grid>
     </Grid>

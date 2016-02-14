@@ -22,5 +22,29 @@ namespace WebExpress.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SE {
+            get {
+                return ((string)(this["SE"]));
+            }
+            set {
+                this["SE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Start {
+            get {
+                return ((string)(this["Start"]));
+            }
+            set {
+                this["Start"] = value;
+            }
+        }
     }
 }

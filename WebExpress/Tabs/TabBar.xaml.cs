@@ -121,6 +121,7 @@ namespace WebExpress
 
             TabCollection.Remove(tabToRemove);
             canvas.Children.Remove(tabToRemove);
+
             foreach (var ctrl in TabCollection)
             {
                 ctrl.Width = tabWidth;
@@ -143,7 +144,8 @@ namespace WebExpress
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            AddTab("New tab", mainWindow, new TabView(mainWindow, ""), Brushes.White);
+            var tab = new TabView(mainWindow, "");
+            AddTab("New tab", mainWindow, tab, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
             CalcSizes();
         }
 

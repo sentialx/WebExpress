@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,6 +15,7 @@ namespace WebExpress
         public bool menuToggled;
         private bool maximized;
         private AddBookmark addbook;
+        public List<TabView> Pages;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +32,7 @@ namespace WebExpress
             Loaded += MainWindow_Loaded;
             WindowChrome wc = new WindowChrome();
             WindowChrome.SetWindowChrome(this, wc);
+            Pages = new List<TabView>();
             Downloads1.Visibility = Visibility.Hidden;
             wc.CaptionHeight = 0;
             wc.UseAeroCaptionButtons = false;
@@ -36,7 +40,11 @@ namespace WebExpress
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            TabBar.AddTab("New tab", this, new TabView(this, ""), Brushes.White);
+            dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
+            var tab = new TabView(this, Convert.ToString(dyn.Start));
+           
+            TabBar.AddTab("New tab", this, tab , new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+
             Menu.mainWindow = this;
             menuToggled = false;
             Menu.Visibility = Visibility.Hidden;
