@@ -28,9 +28,9 @@ namespace WebExpress.Bookmarks
             InitializeComponent();
             ItemsCount = 0;
         }
-        public void AddBookmark(string url, string title)
+        public void AddBookmark(string url, string title, TabView tv)
         {
-            bookmarkItem = new BookmarkItem(url, title);
+            bookmarkItem = new BookmarkItem(url, title, tv);
             Canvas.SetLeft(bookmarkItem, ItemsCount * 177);
             bookmarkItem.Width = 172;
             bookmarkItem.Height = 100;

@@ -25,11 +25,13 @@ namespace WebExpress.Bookmarks
     public partial class BookmarkItem : UserControl
     {
         private string _url;
+        private TabView _tv;
 
-        public BookmarkItem(string url, string title)
+        public BookmarkItem(string url, string title, TabView tv)
         {
             InitializeComponent();
             _url = url;
+            _tv = tv;
             label.Content = title;
             Loaded += BookmarkItem_Loaded;
 
@@ -91,6 +93,16 @@ namespace WebExpress.Bookmarks
         }
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _tv.WebView.Load(_url);
+        }
+
+        private void UserControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+          
+        }
+
+        private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
 
         }

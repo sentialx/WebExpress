@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Net;
 
 namespace WebExpress
 {
@@ -605,14 +606,15 @@ namespace WebExpress
         }
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
-            Dispatcher.Invoke(async () =>
+            Dispatcher.Invoke((Action)(async () =>
             {
-                    var bitmap2 = new BitmapImage();
-                try {
+                var bitmap2 = new BitmapImage();
+                try
+                {
                     bitmap2.BeginInit();
                     bitmap2.UriSource = new Uri(urls[0], UriKind.Absolute);
-                    System.Net.WebRequest request =
-                    System.Net.WebRequest.Create(urls[0]);
+                    HttpWebRequest request =
+                    (HttpWebRequest)HttpWebRequest.Create(urls[0]);
                     System.Net.WebResponse response = await request.GetResponseAsync();
                     System.IO.Stream responseStream =
                         response.GetResponseStream();
@@ -633,11 +635,12 @@ namespace WebExpress
                     mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
 
                     ContrastColor(c2);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     Console.WriteLine("Favicon: " + ex.Message);
                 }
-            });
+            }));
         }
         void ContrastColor(System.Drawing.Color color)
         {
@@ -751,11 +754,11 @@ namespace WebExpress
 
         public void OnBeforeDownload(IBrowser browser, CefSharp.DownloadItem downloadItem, IBeforeDownloadCallback callback)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 mainWindow.Downloads1.AddDownload(downloadItem.Url, "C:\\Users\\Sential\\Downloads\\", downloadItem.SuggestedFileName);
                 mainWindow.Downloads1.Visibility = Visibility.Visible;
-            });
+            }));
         }
 
         public void OnDownloadUpdated(IBrowser browser, CefSharp.DownloadItem downloadItem, IDownloadItemCallback callback)
@@ -771,12 +774,12 @@ namespace WebExpress
         public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IWindowInfo windowInfo, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
             newBrowser = null;
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke((Action)(() => {
                 
 
                 TabView tv = new TabView(mainWindow, targetUrl);
                 mainWindow.TabBar.AddTab("New tab", mainWindow, tv, System.Windows.Media.Brushes.White);
-            });
+            }));
                 return true;
         }
 
@@ -851,7 +854,7 @@ namespace WebExpress
                 addbook = new AddBookmark(Title, WebView.Address, mainWindow);
                 addbook.HorizontalAlignment = HorizontalAlignment.Right;
                 addbook.VerticalAlignment = VerticalAlignment.Top;
-                addbook.Margin = new Thickness(0, 30, 0, 0);
+                addbook.Margin = new Thickness(0, -35, 21, 0);
                 addbook.Width = 300;
                 addbook.Height = 175;
                 container.Children.Add(addbook);

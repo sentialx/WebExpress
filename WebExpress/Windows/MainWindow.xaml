@@ -41,8 +41,8 @@
 
         </Grid>
         <Grid x:Name="container" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="0,26,0,0" />
-        <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" />
-        <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,42,0,0"></local:Downloads>
+        <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,1,-10,0" />
+        <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,-8,-15,0"></local:Downloads>
         
     </Grid>
 

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress.Bookmarks"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="172" MouseDown="UserControl_MouseDown">
+             d:DesignHeight="100" d:DesignWidth="172" MouseDown="UserControl_MouseDown" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave">
     <Grid x:Name="Grid">
 
         <Label x:Name="label" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Margin="44,37,0,37"/>
