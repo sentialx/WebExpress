@@ -88,16 +88,14 @@ namespace WebExpress
         }
         public Tab getTabFromForm(UserControl form)
         {
-
-            Tab tempTab = TabCollection[0];
             foreach (Tab ctrl in TabCollection)
             {
                 if (ctrl.form.Equals(form))
                 {
-                    tempTab = ctrl;
+                    return ctrl;
                 }
             }
-            return tempTab;
+            return TabCollection[0];
         }
 
         public void SelectTab(Tab tabSelect)
