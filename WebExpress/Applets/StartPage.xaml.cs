@@ -10,23 +10,11 @@ namespace WebExpress
     /// </summary>
     public partial class StartPage : UserControl
     {
-        private int ItemsCount;
-        public string Bookmarkslayoutpath =
-        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "WebExpress\\user data\\bookmarks-layout.html");
-
-        public string Bookmarkspath =
-            System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\bookmarks-data.html");
-
-        public string Bookspath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "WebExpress\\user data\\bookmarks.txt");
+        
         public StartPage()
         {
             InitializeComponent();
             Loaded += StartPage_Loaded;
-            ItemsCount = 0;
             
         }
         public void loadFavs(MainWindow mw)
@@ -34,7 +22,7 @@ namespace WebExpress
             Dispatcher.BeginInvoke((Action) (() =>
             {
                 try {
-                    string[] readText = System.IO.File.ReadAllLines(Bookspath);
+                    string[] readText = System.IO.File.ReadAllLines(TabView.Bookspath);
                     ArrayList arr = new ArrayList();
                     foreach (var sr in readText)
                     {
