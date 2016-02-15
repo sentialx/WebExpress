@@ -19,6 +19,9 @@ namespace WebExpress
         public MainWindow()
         {
             InitializeComponent();
+
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.New, OpenNewTab));
+
             maximized = false;
             if (maximized)
             {
@@ -41,10 +44,9 @@ namespace WebExpress
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
-            var tab = new TabView(this, Convert.ToString(dyn.Start));
-           
-            TabBar.AddTab("New tab", this, tab , new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
 
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters(Convert.ToString(dyn.Start), "New Tab", "#FFF9F9F9"), this);
+           
             Menu.mainWindow = this;
             menuToggled = false;
             Menu.Visibility = Visibility.Hidden;
@@ -104,6 +106,12 @@ namespace WebExpress
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
         }
-    }
 
+        private void OpenNewTab(object sender, ExecutedRoutedEventArgs e)
+        {
+            var commandParams = (OpenTabCommandParameters)e.Parameter;
+
+            TabBar.AddTab(commandParams, this);
+        }
+    }
 }

@@ -25,36 +25,29 @@ namespace WebExpress
 
         //Declarations
 
-        public string Bookmarkslayoutpath =
+        public static string Bookmarkslayoutpath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\bookmarks-layout.html");
 
-        public string Bookmarkspath =
+        public static string Bookmarkspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\bookmarks-data.html");
 
-        public string Bookspath = Path.Combine(
+        public static string Bookspath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "WebExpress\\user data\\bookmarks.txt");
 
-        public string Historylayoutpath =
+        public static string Historylayoutpath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history-layout.html");
 
-        public string Historypath =
+        public static string Historypath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history-data.html");
 
-        public string Suggestionspath =
+        public static string Suggestionspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\suggestions.txt");
-
-        public string Userdatapath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data");
-
-        public string Webexpresspath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress");
 
         private bool alreadyFocused;
         private string urlToLoad;
@@ -80,7 +73,6 @@ namespace WebExpress
         private BitmapImage stopBtn;
         private BitmapImage closeBtn;
 
-
         public TabView(MainWindow mw, string url)
         {
             InitializeComponent();
@@ -91,12 +83,6 @@ namespace WebExpress
             LastWebsite = "";
             WebView.LifeSpanHandler = this;
             splitChar = (char)42;
-            CefSettings s = new CefSettings();
-            s.CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cache");
-            CefSharp.Cef.GetGlobalCookieManager().SetStoragePath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cookies"), true);
-            s.UserDataPath = Userdatapath;
-            s.BrowserSubprocessPath = "we.exe";
-            s.PersistSessionCookies = true;
             WebView.DownloadHandler = this;
             WebView.DisplayHandler = this;
             BrowserSettings s1 = new BrowserSettings();
@@ -118,18 +104,7 @@ namespace WebExpress
 
             HideSuggestions();
 
-            if (!Directory.Exists(Webexpresspath))
-            {
-                Directory.CreateDirectory(Webexpresspath);
-                Directory.CreateDirectory(Userdatapath);
-            }
-            if (!Directory.Exists(Userdatapath))
-            {
-                Directory.CreateDirectory(Userdatapath);
-            }
-
             urlToLoad = url;
-           
         }
 
         private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
@@ -469,9 +444,10 @@ namespace WebExpress
                     Task.Factory.StartNew(() => SetAddress(e.Url));
                     RefreshImage.Source = stopBtn;
                     refreshing = false;
-                    foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions"))
-                    {
-                        if (System.IO.Path.GetExtension(file) == ".js")
+                    var extensionsPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions";
+                    if(Directory.Exists(extensionsPath))
+                    { 
+                        foreach (string file in System.IO.Directory.GetFiles(extensionsPath, "*.js"))
                         {
                             WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
                         }
@@ -821,13 +797,13 @@ namespace WebExpress
         public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IWindowInfo windowInfo, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
             newBrowser = null;
-            Dispatcher.BeginInvoke((Action)(() => {
-                
 
-                TabView tv = new TabView(mainWindow, targetUrl);
-                mainWindow.TabBar.AddTab("New tab", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                ApplicationCommands.New.Execute(new OpenTabCommandParameters(targetUrl, "New tab", "#FFF9F9F9"), this);
             }));
-                return true;
+
+            return true;
         }
 
         public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser)

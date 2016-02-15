@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Input;
 
 namespace WebExpress
 {
@@ -12,7 +13,6 @@ namespace WebExpress
     {
         private static object[] infoToPass;
         private int AddButtonCount;
-        private MainWindow mainWindow;
         private int pixelsSoFar;
         private Tab tab;
         public List<Tab> TabCollection;
@@ -33,12 +33,22 @@ namespace WebExpress
             TabCollection = new List<Tab>();
         }
 
-        public void AddTab(string title, MainWindow mw, UserControl userControl, Brush brush)
+        public void AddTab(OpenTabCommandParameters commandParams, MainWindow mw)
         {
+            UserControl userControl;
+
+            if(commandParams.Control == null)
+            {
+                 userControl = new TabView(mw, commandParams.Url);
+            }
+            else
+            {
+                userControl = commandParams.Control;
+            }
+
             Dispatcher.BeginInvoke((Action) (() =>
             {
-                tab = new Tab(title, mw, userControl, brush);
-
+                tab = new Tab(commandParams.Title, mw, userControl, commandParams.Brush);
 
                 tab.Width = tabWidth;
                 tab.Height = tabHeight;
@@ -60,8 +70,6 @@ namespace WebExpress
                 AddButtonCount += 1;
                 TabCollection.Add(tab);
 
-
-
                 var fade = new DoubleAnimation()
                 {
                     From = 0,
@@ -75,25 +83,19 @@ namespace WebExpress
                 sb.Children.Add(fade);
                 sb.Begin();
 
-
-
-
                 CalcSizes();
-                mainWindow = mw;
             }));
         }
         public Tab getTabFromForm(UserControl form)
         {
-
-            Tab tempTab = TabCollection[0];
             foreach (Tab ctrl in TabCollection)
             {
                 if (ctrl.form.Equals(form))
                 {
-                    tempTab = ctrl;
+                    return ctrl;
                 }
             }
-            return tempTab;
+            return TabCollection[0];
         }
 
         public void SelectTab(Tab tabSelect)
@@ -144,8 +146,8 @@ namespace WebExpress
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            var tab = new TabView(mainWindow, "");
-            AddTab("New tab", mainWindow, tab, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+            //Raise command to open a new tab
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters(string.Empty, "New tab", "#FFF9F9F9"), this);
             CalcSizes();
         }
 

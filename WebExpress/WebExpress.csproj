@@ -63,7 +63,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>WebExpress.App</StartupObject>
+    <StartupObject>WebExpress.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -104,6 +104,7 @@
     <Compile Include="Bookmarks\Bookmarks.xaml.cs">
       <DependentUpon>Bookmarks.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ControlExtensions.cs" />
     <Compile Include="Controls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
@@ -122,6 +123,8 @@
     <Compile Include="Extensions\Extension.xaml.cs">
       <DependentUpon>Extension.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OpenTabCommandParameters.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Tabs\TabBar.xaml.cs">
       <DependentUpon>TabBar.xaml</DependentUpon>
     </Compile>
