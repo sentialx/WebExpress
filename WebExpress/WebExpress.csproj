@@ -122,6 +122,7 @@
     <Compile Include="Extensions\Extension.xaml.cs">
       <DependentUpon>Extension.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OpenTabCommandParameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Tabs\TabBar.xaml.cs">
       <DependentUpon>TabBar.xaml</DependentUpon>

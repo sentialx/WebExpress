@@ -10,11 +10,9 @@ namespace WebExpress.Applets
 
     public partial class Settings : UserControl
     {
-        MainWindow mainWindow;
-        public Settings(MainWindow mw)
+        public Settings()
         {
             InitializeComponent();
-            mainWindow = mw;
             Loaded += Settings_Loaded;
 
         }

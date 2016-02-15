@@ -4,6 +4,7 @@ using WebExpress.Applets;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System;
+using System.Windows.Input;
 
 namespace WebExpress.Controls
 {
@@ -28,9 +29,9 @@ namespace WebExpress.Controls
 
         private void HistoryButton_Click(object sender, EventArgs e)
         {
-            var tv = new TabView(mainWindow, "file://" + TabView.Historylayoutpath);
             Console.WriteLine(TabView.Historylayoutpath);
-            mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters("file://" + TabView.Historylayoutpath, "History", "#FFF9F9F9"), this);
 
             ExecuteStoryBoard();
         }
@@ -41,30 +42,23 @@ namespace WebExpress.Controls
         }
         private void SettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Settings tv = new Settings(mainWindow);
-
-            var converter = new BrushConverter();
-            var brush = (Brush)converter.ConvertFromString("#1abc9c");
-            mainWindow.TabBar.AddTab("Settings", mainWindow, tv, brush);
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters(new Settings(), "Settings", "#1abc9c"), this);
 
             ExecuteStoryBoard();
         }
 
         private void AddonsButton_Click(object sender, RoutedEventArgs e)
         {
-            var tv = new Extensions();
-            var converter = new BrushConverter();
-            var brush = (Brush)converter.ConvertFromString("#1abc9c");
-            mainWindow.TabBar.AddTab("Extensions", mainWindow, tv, brush);
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters(new Extensions(), "Extensions", "#1abc9c"), this);
 
             ExecuteStoryBoard();
         }
 
         private void BookmarksButton_Click(object sender, RoutedEventArgs e)
         {
-            var tv = new TabView(mainWindow, "file://" + TabView.Bookmarkslayoutpath);
             Console.WriteLine(TabView.Historylayoutpath);
-            mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+
+            ApplicationCommands.New.Execute(new OpenTabCommandParameters("file://" + TabView.Bookmarkslayoutpath, "Bookmarks", "#FFF9F9F9"), this);
             
             ExecuteStoryBoard();
         }

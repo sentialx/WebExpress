@@ -797,13 +797,13 @@ namespace WebExpress
         public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IWindowInfo windowInfo, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
             newBrowser = null;
-            Dispatcher.BeginInvoke((Action)(() => {
-                
 
-                TabView tv = new TabView(mainWindow, targetUrl);
-                mainWindow.TabBar.AddTab("New tab", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                ApplicationCommands.New.Execute(new OpenTabCommandParameters(targetUrl, "New tab", "#FFF9F9F9"), this);
             }));
-                return true;
+
+            return true;
         }
 
         public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
