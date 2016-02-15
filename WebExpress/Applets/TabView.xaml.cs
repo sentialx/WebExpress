@@ -49,13 +49,6 @@ namespace WebExpress
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\suggestions.txt");
 
-        public string Userdatapath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data");
-
-        public string Webexpresspath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress");
-
         private bool alreadyFocused;
         private string urlToLoad;
         private string Title;
@@ -80,7 +73,6 @@ namespace WebExpress
         private BitmapImage stopBtn;
         private BitmapImage closeBtn;
 
-
         public TabView(MainWindow mw, string url)
         {
             InitializeComponent();
@@ -91,12 +83,6 @@ namespace WebExpress
             LastWebsite = "";
             WebView.LifeSpanHandler = this;
             splitChar = (char)42;
-            CefSettings s = new CefSettings();
-            s.CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cache");
-            CefSharp.Cef.GetGlobalCookieManager().SetStoragePath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cookies"), true);
-            s.UserDataPath = Userdatapath;
-            s.BrowserSubprocessPath = "we.exe";
-            s.PersistSessionCookies = true;
             WebView.DownloadHandler = this;
             WebView.DisplayHandler = this;
             BrowserSettings s1 = new BrowserSettings();
@@ -118,18 +104,7 @@ namespace WebExpress
 
             HideSuggestions();
 
-            if (!Directory.Exists(Webexpresspath))
-            {
-                Directory.CreateDirectory(Webexpresspath);
-                Directory.CreateDirectory(Userdatapath);
-            }
-            if (!Directory.Exists(Userdatapath))
-            {
-                Directory.CreateDirectory(Userdatapath);
-            }
-
             urlToLoad = url;
-           
         }
 
         private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
