@@ -29,13 +29,6 @@ namespace WebExpress.Bookmarks
         private MainWindow mainWindow;
         private TabView _tv;
         private Bookmarks bookmarks;
-        public string Bookmarkspath =
-    System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "WebExpress\\user data\\bookmarks-data.html");
-
-        public string Bookspath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "WebExpress\\user data\\bookmarks.txt");
 
         public BookmarkItem(string url, string title, TabView tv, MainWindow mw, Bookmarks books)
         {
@@ -155,19 +148,12 @@ namespace WebExpress.Bookmarks
                 
                 try
                 {
-                    string[] readText = System.IO.File.ReadAllLines(Bookspath);
-                    ArrayList arr = new ArrayList();
-                    foreach (var sr in readText)
-                    {
-                        arr.Add(sr);
-                    }
-                    
                     Grid parent = bookmarks.Parent as Grid;
                     Grid parent2 = parent.Parent as Grid;
                     StartPage parent3 = parent2.Parent as StartPage;
                     Grid parent4 = parent3.Parent as Grid;
                     TabView parent5 = parent4.Parent as TabView;
-                    foreach (string s in arr)
+                    foreach (string s in System.IO.File.ReadAllLines(TabView.Bookspath))
                     {
                         string[] split = s.Split((char)42);
                         bookmarks.AddBookmark(split[0], split[1], parent5, mw);
@@ -181,8 +167,8 @@ namespace WebExpress.Bookmarks
         }
         private void close_click(object sender, RoutedEventArgs e)
         {
-            
-            string[] readText = File.ReadAllLines(Bookspath);
+
+            string[] readText = File.ReadAllLines(TabView.Bookspath);
             ArrayList arr = new ArrayList();
             foreach (var sr in readText)
             {
@@ -193,11 +179,11 @@ namespace WebExpress.Bookmarks
                 if (line.Contains(_url))
                 {
                     string[] lines = { line };
-                    RemoveLines(Bookspath, lines);
+                    RemoveLines(TabView.Bookspath, lines);
                 }
             }
 
-            string[] readText1 = File.ReadAllLines(Bookmarkspath);
+            string[] readText1 = File.ReadAllLines(TabView.Bookmarkspath);
             ArrayList arr2 = new ArrayList();
             foreach (var sr in readText1)
             {
@@ -208,7 +194,7 @@ namespace WebExpress.Bookmarks
                 if (line.Contains(_url))
                 {
                     string[] lines = { line };
-                    RemoveLines(Bookmarkspath, lines);
+                    RemoveLines(TabView.Bookmarkspath, lines);
                 }
             }
             
