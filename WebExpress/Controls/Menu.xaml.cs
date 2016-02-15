@@ -19,49 +19,25 @@ namespace WebExpress.Controls
             
         }
 
-
         private void DownloadsButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             mainWindow.Downloads1.Visibility = Visibility.Visible;
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
 
-                 Visibility = Visibility.Hidden;
-             };
+            ExecuteStoryBoard();
         }
 
         private void HistoryButton_Click(object sender, EventArgs e)
         {
-            TabView tv = new TabView(mainWindow, "mw");
-            tv = new TabView(mainWindow, "file://" + tv.Historylayoutpath);
-            Console.WriteLine(tv.Historylayoutpath);
+            var tv = new TabView(mainWindow, "file://" + TabView.Historylayoutpath);
+            Console.WriteLine(TabView.Historylayoutpath);
             mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
 
-                 Visibility = Visibility.Hidden;
-             };
+            ExecuteStoryBoard();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
-
-                 Visibility = Visibility.Hidden;
-             };
+            ExecuteStoryBoard();
         }
         private void SettingsButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -70,50 +46,38 @@ namespace WebExpress.Controls
             var converter = new BrushConverter();
             var brush = (Brush)converter.ConvertFromString("#1abc9c");
             mainWindow.TabBar.AddTab("Settings", mainWindow, tv, brush);
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
 
-                 Visibility = Visibility.Hidden;
-             };
+            ExecuteStoryBoard();
         }
 
         private void AddonsButton_Click(object sender, RoutedEventArgs e)
         {
-            Extensions tv = new Extensions();
-            tv = new Extensions();
+            var tv = new Extensions();
             var converter = new BrushConverter();
             var brush = (Brush)converter.ConvertFromString("#1abc9c");
             mainWindow.TabBar.AddTab("Extensions", mainWindow, tv, brush);
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this);
-            sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
 
-                 Visibility = Visibility.Hidden;
-             };
+            ExecuteStoryBoard();
         }
 
         private void BookmarksButton_Click(object sender, RoutedEventArgs e)
         {
-            TabView tv = new TabView(mainWindow, "mw");
-            tv = new TabView(mainWindow, "file://" + tv.Bookmarkslayoutpath);
-            Console.WriteLine(tv.Historylayoutpath);
+            var tv = new TabView(mainWindow, "file://" + TabView.Bookmarkslayoutpath);
+            Console.WriteLine(TabView.Historylayoutpath);
             mainWindow.TabBar.AddTab("History", mainWindow, tv, new BrushConverter().ConvertFromString("#FFF9F9F9") as SolidColorBrush);
+            
+            ExecuteStoryBoard();
+        }
+
+        private void ExecuteStoryBoard()
+        {
             Storyboard sb = this.FindResource("sb") as Storyboard;
             Storyboard.SetTarget(sb, this);
             sb.Begin();
-            sb.Completed +=
-             (o, e1) =>
-             {
-
-                 Visibility = Visibility.Hidden;
-             };
+            sb.Completed += (o, e1) =>
+            {
+                Visibility = Visibility.Hidden;
+            };
         }
     }
 }

@@ -25,27 +25,27 @@ namespace WebExpress
 
         //Declarations
 
-        public string Bookmarkslayoutpath =
+        public static string Bookmarkslayoutpath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\bookmarks-layout.html");
 
-        public string Bookmarkspath =
+        public static string Bookmarkspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\bookmarks-data.html");
 
-        public string Bookspath = Path.Combine(
+        public static string Bookspath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "WebExpress\\user data\\bookmarks.txt");
 
-        public string Historylayoutpath =
+        public static string Historylayoutpath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history-layout.html");
 
-        public string Historypath =
+        public static string Historypath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history-data.html");
 
-        public string Suggestionspath =
+        public static string Suggestionspath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\suggestions.txt");
 
