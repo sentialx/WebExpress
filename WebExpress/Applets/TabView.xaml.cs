@@ -444,9 +444,10 @@ namespace WebExpress
                     Task.Factory.StartNew(() => SetAddress(e.Url));
                     RefreshImage.Source = stopBtn;
                     refreshing = false;
-                    foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions"))
-                    {
-                        if (System.IO.Path.GetExtension(file) == ".js")
+                    var extensionsPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions";
+                    if(Directory.Exists(extensionsPath))
+                    { 
+                        foreach (string file in System.IO.Directory.GetFiles(extensionsPath, "*.js"))
                         {
                             WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
                         }
