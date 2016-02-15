@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WebExpress.Controls;
 
 namespace WebExpress.Bookmarks
 {
@@ -148,15 +149,11 @@ namespace WebExpress.Bookmarks
                 
                 try
                 {
-                    Grid parent = bookmarks.Parent as Grid;
-                    Grid parent2 = parent.Parent as Grid;
-                    StartPage parent3 = parent2.Parent as StartPage;
-                    Grid parent4 = parent3.Parent as Grid;
-                    TabView parent5 = parent4.Parent as TabView;
+                    TabView tabView = bookmarks.FindParent<TabView>();
                     foreach (string s in System.IO.File.ReadAllLines(TabView.Bookspath))
                     {
                         string[] split = s.Split((char)42);
-                        bookmarks.AddBookmark(split[0], split[1], parent5, mw);
+                        bookmarks.AddBookmark(split[0], split[1], tabView, mw);
                     }
                 }
                 catch (Exception ex)
