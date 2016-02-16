@@ -50,7 +50,25 @@ namespace WebExpress.Applets
             }
         }
 
-   
+        private void ClearCookiesBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearHistoryBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (System.IO.File.Exists(StaticDeclarations.Historypath))
+                {
+                    System.IO.File.Delete(StaticDeclarations.Historypath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Clear history error: " + ex.Message);
+            }
+        }
     }
     public class Values
     {

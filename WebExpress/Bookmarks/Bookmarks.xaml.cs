@@ -41,7 +41,7 @@ namespace WebExpress.Bookmarks
                 if (ItemsCount != 3)
                 {
 
-                    bookmarkItem = new BookmarkItem(url, title, tv, mainWindow, this);
+                    bookmarkItem = new BookmarkItem(url, title, tv, mw, this);
                     Canvas canvas1 = new Canvas();
                     mainCanvas.Children.Add(canvas1);
                     Canvas.SetTop(canvas1, RowsCount * 105);
@@ -54,7 +54,7 @@ namespace WebExpress.Bookmarks
                         ItemsCount = 0;
                         RowsCount += 1;
                     }
-                    if (RowsCount >= 3)
+                    if (RowsCount > 3)
                     {
                         mainCanvas.Height = (RowsCount + 1) * 110;
                     }

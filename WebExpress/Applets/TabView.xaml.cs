@@ -25,30 +25,6 @@ namespace WebExpress
 
         //Declarations
 
-        public static string Bookmarkslayoutpath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\bookmarks-layout.html");
-
-        public static string Bookmarkspath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\bookmarks-data.html");
-
-        public static string Bookspath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "WebExpress\\user data\\bookmarks.txt");
-
-        public static string Historylayoutpath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\history-layout.html");
-
-        public static string Historypath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\history-data.html");
-
-        public static string Suggestionspath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "WebExpress\\user data\\suggestions.txt");
-
         private bool alreadyFocused;
         private string urlToLoad;
         private string Title;
@@ -94,6 +70,7 @@ namespace WebExpress
             refreshing = false;
             allItems1 = new List<string>();
 
+
             //Events
 
             WebView.FrameLoadEnd += WebView_FrameLoadEnd;
@@ -102,7 +79,10 @@ namespace WebExpress
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
             WebView.FrameLoadStart += WebView_FrameLoadStart;
 
+            //Method calls
+
             HideSuggestions();
+            mw.Pages.Add(this);
 
             urlToLoad = url;
         }
@@ -117,7 +97,7 @@ namespace WebExpress
             }));
         }
 
-        private void whiteButtons()
+        private void WhiteButtons()
         {
             //Buttons Images
 
@@ -216,7 +196,7 @@ namespace WebExpress
         }
 
 
-        private void blackButtons()
+        private void BlackButtons()
         {
             //Buttons Images
 
@@ -332,8 +312,9 @@ namespace WebExpress
         private void TabView_Loaded(object sender, RoutedEventArgs e)
         {
             Task.Factory.StartNew(LoadSuggestions);
-            blackButtons();
+            BlackButtons();
             startPage.loadFavs(mainWindow);
+            textBox.Focus();
         }
 
         private void LoadSuggestions()
@@ -345,7 +326,7 @@ namespace WebExpress
                     listBox.Items.Clear();
                     allItems1.Clear();
 
-                    string[] readText = File.ReadAllLines(Suggestionspath);
+                    string[] readText = File.ReadAllLines(StaticDeclarations.Suggestionspath);
                     var arr = new ArrayList();
                     foreach (var sr in readText)
                     {
@@ -380,14 +361,14 @@ namespace WebExpress
         {
             Dispatcher.BeginInvoke((Action) (() =>
             {
-                if (!File.Exists(Historypath))
+                if (!File.Exists(StaticDeclarations.Historypath))
                 {
-                    File.Create(Historypath);
+                    File.Create(StaticDeclarations.Historypath);
                 }
-                    if (!File.Exists(Historylayoutpath))
+                    if (!File.Exists(StaticDeclarations.Historylayoutpath))
                     {
 
-                    var filePath = Historylayoutpath;
+                    var filePath = StaticDeclarations.Historylayoutpath;
                     using (var sw = new StreamWriter(filePath, true))
                     {
                         sw.WriteLine(
@@ -404,16 +385,16 @@ namespace WebExpress
                                 "  <a target='_blank' href=" + WebView.Address + ">  -  " + WebView.Address + "</a></p>";
                             StreamReader srReader = null;
                             StreamWriter swWriter = null;
-                            srReader = new StreamReader(Historypath);
+                            srReader = new StreamReader(StaticDeclarations.Historypath);
                             strFileContents = srReader.ReadToEnd();
                             srReader.Close();
 
                             strFileContents = strDataToAppend + Environment.NewLine + strFileContents;
-                            swWriter = new StreamWriter(Historypath, false);
+                            swWriter = new StreamWriter(StaticDeclarations.Historypath, false);
                             swWriter.Write(strFileContents);
                             swWriter.Flush();
 
-                            var filePath1 = Suggestionspath;
+                            var filePath1 = StaticDeclarations.Suggestionspath;
                             using (var sw = new StreamWriter(filePath1, true))
                             {
                                 sw.WriteLine(WebView.Address + splitChar + Title);
@@ -425,6 +406,17 @@ namespace WebExpress
                     {
 
                     }
+                foreach (TabView page in mainWindow.Pages)
+                {
+                    try
+                    {
+                        Task.Factory.StartNew(page.LoadSuggestions);
+                    }
+                    catch
+                    {
+
+                    }
+                }
             }));
         }
 
@@ -455,7 +447,7 @@ namespace WebExpress
                 }
 
                     Task.Factory.StartNew(WriteHistory);
-                Task.Factory.StartNew(LoadSuggestions);
+               
 
             });
         }
@@ -584,34 +576,7 @@ namespace WebExpress
         {
            
         }
-        public static System.Drawing.Color getDominantColor(Bitmap bmp)
-        {
-            int r = 0;
-            int g = 0;
-            int b = 0;
-
-            int total = 0;
-
-            for (int x = 0; x < bmp.Width; x++)
-            {
-                for (int y = 0; y < bmp.Height; y++)
-                {
-                    System.Drawing.Color clr = bmp.GetPixel(x, y);
-
-                    r += clr.R;
-                    g += clr.G;
-                    b += clr.B;
-
-                    total++;
-                }
-            }
-
-            r /= total;
-            g /= total;
-            b /= total;
-
-            return System.Drawing.Color.FromArgb(r, g, b);
-        }
+       
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
             Dispatcher.BeginInvoke((Action)(async () =>
@@ -627,7 +592,7 @@ namespace WebExpress
                     System.IO.Stream responseStream =
                         response.GetResponseStream();
                     Bitmap bmp = new Bitmap(responseStream);
-                    System.Drawing.Color cc = getDominantColor(bmp);
+                    System.Drawing.Color cc = StaticFunctions.GetDominantColor(bmp);
                     System.Drawing.Color c2 = System.Drawing.Color.FromArgb(cc.A, Convert.ToInt32(cc.R / 1), Convert.ToInt32(cc.G / 1), Convert.ToInt32(cc.B / 1));
                     _color = c2;
                     
@@ -665,7 +630,7 @@ namespace WebExpress
                 mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.Black;
                 textBox.Foreground = System.Windows.Media.Brushes.Black;
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
-                blackButtons();
+                BlackButtons();
                 SolidColorBrush scb = new SolidColorBrush();
                 scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
                 textBox.Background = scb;
@@ -676,7 +641,7 @@ namespace WebExpress
                 if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
                     mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.White;
                 textBox.Foreground = System.Windows.Media.Brushes.White;
-                whiteButtons();
+                WhiteButtons();
                 listBox.Foreground = System.Windows.Media.Brushes.White;
                 SolidColorBrush scb = new SolidColorBrush();
                 scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
@@ -689,7 +654,19 @@ namespace WebExpress
 
         public void OnFullscreenModeChange(IWebBrowser browserControl, IBrowser browser, bool fullscreen)
         {
-            fullscreen = true;
+            Dispatcher.BeginInvoke((Action) (() =>
+            {
+                if (fullscreen == true)
+                {
+                    Panel.Visibility = Visibility.Hidden;
+                    WebView.Margin = new Thickness(0);
+                }
+                else
+                {
+                    Panel.Visibility = Visibility.Visible;
+                    WebView.Margin = new Thickness(0, 42, 0, 0);
+                }
+            }));
         }
 
         public bool OnTooltipChanged(IWebBrowser browserControl, string text)
@@ -771,7 +748,6 @@ namespace WebExpress
                 Storyboard sb = mainWindow.FindResource("sb2") as Storyboard;
                 Storyboard.SetTarget(sb, mainWindow.Menu);
                 sb.Begin();
-                mainWindow.menuToggled = true;
         }
 
 
@@ -877,9 +853,10 @@ namespace WebExpress
                 addbook = new AddBookmark(Title, WebView.Address, mainWindow);
                 addbook.HorizontalAlignment = HorizontalAlignment.Right;
                 addbook.VerticalAlignment = VerticalAlignment.Top;
-                addbook.Margin = new Thickness(0, -35, 21, 0);
+                addbook.Margin = new Thickness(0, -28, 27, 0);
                 addbook.Width = 300;
                 addbook.Height = 175;
+            addbook.Visibility = Visibility.Visible;
                 container.Children.Add(addbook);
             
         }

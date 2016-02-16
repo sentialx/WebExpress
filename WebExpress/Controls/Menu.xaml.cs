@@ -4,6 +4,7 @@ using WebExpress.Applets;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace WebExpress.Controls
@@ -29,11 +30,19 @@ namespace WebExpress.Controls
 
         private void HistoryButton_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(TabView.Historylayoutpath);
+            Console.WriteLine(StaticDeclarations.Historylayoutpath);
+            try
+            {
+                ApplicationCommands.New.Execute(
+                    new OpenTabCommandParameters("file://" + StaticDeclarations.Historylayoutpath, "History",
+                        "#FFF9F9F9"), this);
 
-            ApplicationCommands.New.Execute(new OpenTabCommandParameters("file://" + TabView.Historylayoutpath, "History", "#FFF9F9F9"), this);
-
-            ExecuteStoryBoard();
+                ExecuteStoryBoard();
+            }
+            catch
+            {
+                
+            }
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -56,11 +65,20 @@ namespace WebExpress.Controls
 
         private void BookmarksButton_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(TabView.Historylayoutpath);
+            Console.WriteLine(StaticDeclarations.Historylayoutpath);
 
-            ApplicationCommands.New.Execute(new OpenTabCommandParameters("file://" + TabView.Bookmarkslayoutpath, "Bookmarks", "#FFF9F9F9"), this);
-            
-            ExecuteStoryBoard();
+            try
+            {
+                ApplicationCommands.New.Execute(
+                    new OpenTabCommandParameters("file://" + StaticDeclarations.Bookmarkslayoutpath, "Bookmarks",
+                        "#FFF9F9F9"), this);
+
+                ExecuteStoryBoard();
+            }
+            catch
+            {
+                
+            }
         }
 
         private void ExecuteStoryBoard()
@@ -72,6 +90,16 @@ namespace WebExpress.Controls
             {
                 Visibility = Visibility.Hidden;
             };
+        }
+
+        private void button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
+        }
+
+        private void button_MouseLeave(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
         }
     }
 }

@@ -28,7 +28,18 @@
             <ComboBoxItem Content="YouTube"/>
 
         </ComboBox>
-        <Label x:Name="startPage_Copy" Content="Search engine" HorizontalAlignment="Left" Margin="77,217,0,0" VerticalAlignment="Top" Foreground="#FF1ABC9C"/>
-
+        <Label x:Name="searchEngine" Content="Search engine" HorizontalAlignment="Left" Margin="77,217,0,0" VerticalAlignment="Top" Foreground="#FF1ABC9C"/>
+        <Label x:Name="Privacy" Content="Privacy" HorizontalAlignment="Left" Margin="35,291,0,0" VerticalAlignment="Top" FontSize="24" FontFamily="Segoe UI Semibold"/>
+        <Button x:Name="ClearHistoryBtn" Content="Clear history" HorizontalAlignment="Left" Margin="179,351,0,0" VerticalAlignment="Top" Width="93" Height="29" Background="White" BorderBrush="{x:Null}" Click="ClearHistoryBtn_Click">
+            <Button.Effect>
+                <DropShadowEffect BlurRadius="8" Direction="-90" Opacity="0.3" ShadowDepth="2" />
+            </Button.Effect>
+        </Button>
+        
+        <Button x:Name="ClearCookiesBtn" Content="Clear cookies" HorizontalAlignment="Left" Margin="81,351,0,0" VerticalAlignment="Top" Width="93" Height="29" Background="White" BorderBrush="{x:Null}" Click="ClearCookiesBtn_Click">
+            <Button.Effect>
+                <DropShadowEffect BlurRadius="8" Direction="-90" Opacity="0.3" ShadowDepth="2"/>
+            </Button.Effect>
+        </Button>
     </Grid>
 </UserControl>

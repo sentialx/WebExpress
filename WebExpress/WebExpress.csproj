@@ -65,6 +65,9 @@
   <PropertyGroup>
     <StartupObject>WebExpress.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>WE-LOGO.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -104,7 +107,7 @@
     <Compile Include="Bookmarks\Bookmarks.xaml.cs">
       <DependentUpon>Bookmarks.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ControlExtensions.cs" />
+    <Compile Include="Classes\ControlExtensions.cs" />
     <Compile Include="Controls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
@@ -123,8 +126,10 @@
     <Compile Include="Extensions\Extension.xaml.cs">
       <DependentUpon>Extension.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OpenTabCommandParameters.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Classes\OpenTabCommandParameters.cs" />
+    <Compile Include="Classes\Program.cs" />
+    <Compile Include="Classes\StaticDeclarations.cs" />
+    <Compile Include="Classes\StaticFunctions.cs" />
     <Compile Include="Tabs\TabBar.xaml.cs">
       <DependentUpon>TabBar.xaml</DependentUpon>
     </Compile>
@@ -253,6 +258,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\about.html" />
+    <Resource Include="WE-LOGO.ico" />
+    <Resource Include="Resources\add_tab.png" />
     <Resource Include="Resources\menu_hover_white.png" />
     <Resource Include="Resources\menu_white.png" />
     <Resource Include="Resources\back_hover.png" />

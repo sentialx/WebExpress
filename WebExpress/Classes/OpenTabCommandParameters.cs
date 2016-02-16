@@ -16,14 +16,21 @@ namespace WebExpress
 		{
 			Url = url;
 			Title = title;
-			Brush = (SolidColorBrush)converter.ConvertFromString("#FFF9F9F9");
+			Brush = (SolidColorBrush)converter.ConvertFromString(brush);
 		}
 
 		public OpenTabCommandParameters(UserControl control, string title, string brush)
 		{
 			Control = control;
 			Title = title;
-			Brush = (SolidColorBrush)converter.ConvertFromString("#FFF9F9F9");
+			Brush = (SolidColorBrush)converter.ConvertFromString(brush);
 		}
-	}
+        public OpenTabCommandParameters(UserControl control, string url, string title, string brush)
+        {
+            Control = control;
+            Title = title;
+            Url = url;
+            Brush = (SolidColorBrush)converter.ConvertFromString(brush);
+        }
+    }
 }

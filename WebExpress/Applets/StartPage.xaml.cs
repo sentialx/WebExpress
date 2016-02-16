@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using WebExpress.Controls;
 
 namespace WebExpress
 {
@@ -17,12 +18,35 @@ namespace WebExpress
             Loaded += StartPage_Loaded;
             
         }
+        public void refreshFavs(MainWindow mw)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                bookmarks.ItemsCount = 0;
+                bookmarks.RowsCount = 0;
+                bookmarks.mainCanvas.Children.Clear();
+
+                try
+                {
+                    TabView tabView = bookmarks.FindParent<TabView>();
+                    foreach (string s in System.IO.File.ReadAllLines(StaticDeclarations.Bookspath))
+                    {
+                        string[] split = s.Split((char)42);
+                        bookmarks.AddBookmark(split[0], split[1], tabView, mw);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("LoadFavs error: " + ex.Message);
+                }
+            }));
+        }
         public void loadFavs(MainWindow mw)
         {
             Dispatcher.BeginInvoke((Action) (() =>
             {
                 try {
-                    string[] readText = System.IO.File.ReadAllLines(TabView.Bookspath);
+                    string[] readText = System.IO.File.ReadAllLines(StaticDeclarations.Bookspath);
                     ArrayList arr = new ArrayList();
                     foreach (var sr in readText)
                     {

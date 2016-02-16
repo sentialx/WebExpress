@@ -7,42 +7,65 @@
         xmlns:bookmarks="clr-namespace:WebExpress.Bookmarks"
         xmlns:Controls="clr-namespace:WebExpress.Controls" x:Name="MainGrid" x:Class="WebExpress.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="640" Width="1024" StateChanged="MainGrid_StateChanged" Activated="MainGrid_PreviewMouseDown">
+        Title="WebExpress" Height="512" Width="768" StateChanged="MainGrid_StateChanged" Activated="MainGrid_PreviewMouseDown" Icon="/WebExpress;component/WE-LOGO.ico">
     <Window.Resources>
-
+        <Style x:Shared="True" x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="1"
+                            Padding="4,2" 
+                            BorderBrush="Transparent" 
+                            CornerRadius="3" 
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Storyboard x:Key="sb2" x:Name="sb2">
-            <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="266"  />
+            <DoubleAnimation Duration="00:00:0.20" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="266"  />
         </Storyboard>
         <Storyboard x:Key="sb" x:Name="sb">
             <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="0"  />
         </Storyboard>
-    </Window.Resources>
+       
+        </Window.Resources>
 
     <Grid  x:Name="Grid" Background="White" Opacity="0.995">
         
         <Grid Height="26" Background="#FFF0F0F0" HorizontalAlignment="Stretch" VerticalAlignment="Top" MouseDown="Grid_MouseDown">
-            <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" Margin="0,0,148,0"/>
+            <local:TabBar x:Name="TabBar" Height="26" VerticalAlignment="Top" Margin="0,0,113,0"/>
 
-            <Button x:Name="Close" Width="30"  Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Close_Click" Margin="0,0,10,0">
+            <Button Style="{StaticResource ButtonStyle}" x:Name="Close" Width="30"  Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Close_Click" Margin="0,0,10,0" MouseEnter="Close_MouseEnter" MouseLeave="Close_MouseLeave">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Resources/close_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                    <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
                 </StackPanel>
             </Button>
-            <Button x:Name="Maximize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Maximize_Click" Margin="0,0,46,0">
+            <Button Style="{StaticResource ButtonStyle}" x:Name="Maximize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Click="Maximize_Click" Margin="0,0,46,0" MouseEnter="Maximize_MouseEnter" MouseLeave="Maximize_MouseLeave">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Resources/maximize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                    <Image x:Name="MaximizeImage" Source="pack://application:,,,/Resources/maximize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
                 </StackPanel>
             </Button>
-            <Button x:Name="Minimize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,78,0">
+            <Button Style="{StaticResource ButtonStyle}" x:Name="Minimize" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="0,0,78,0" MouseEnter="Minimize_MouseEnter" MouseLeave="Minimize_MouseLeave" Click="Minimize_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Resources/minimize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
+                    <Image x:Name="MinimizeImage" Source="pack://application:,,,/Resources/minimize_button.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,3,3,3"/>
                 </StackPanel>
             </Button>
 
         </Grid>
         <Grid x:Name="container" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="0,26,0,0" />
-        <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,1,-10,0" />
-        <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,-8,-15,0"></local:Downloads>
+        <Controls:Menu x:Name="Menu" Width="175" Height="266" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,7,-10,0" />
+        <local:Downloads x:Name="Downloads1" VerticalAlignment="Top" HorizontalAlignment="Right" Width="250" Height="95" Margin="0,-2,-15,0"></local:Downloads>
         
     </Grid>
 

@@ -10,12 +10,34 @@
         <DropShadowEffect Opacity="0.25" Direction="-60" BlurRadius="15"/>
     </UserControl.Effect>
     <UserControl.Resources>
-
+        <Style x:Shared="True" x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="1"
+                            Padding="2" 
+                            BorderBrush="Transparent" 
+                            CornerRadius="3" 
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Storyboard x:Key="sb2" x:Name="sb2">
-            <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="266"  />
+            <DoubleAnimation Duration="00:00:0.25" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="266"  />
         </Storyboard>
         <Storyboard x:Key="sb" x:Name="sb">
-            <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="0"  />
+            <DoubleAnimation Duration="00:00:0.20" BeginTime="0:0:0:0" Storyboard.TargetProperty="Height" To="0"  />
         </Storyboard>
     </UserControl.Resources>
 
@@ -51,8 +73,8 @@
             <TextBlock Text="More options" TextAlignment="Left" RenderTransformOrigin="-1.013,0.52"/>
 
         </Button>
-        <Button x:Name="button" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,10,10,0" Click="button_Click">
-            <Image Source="/WebExpress;component/Resources/close_button.png"/>
+        <Button x:Name="button" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,10,10,0" Click="button_Click" MouseEnter="button_MouseEnter" MouseLeave="button_MouseLeave">
+            <Image x:Name="CloseImage" Source="/WebExpress;component/Resources/close_button.png"/>
         </Button>
 
     </Grid>

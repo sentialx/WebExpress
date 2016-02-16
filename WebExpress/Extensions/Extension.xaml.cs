@@ -53,5 +53,15 @@ namespace WebExpress
                     }
             parent3.AddExtensions();
         }
+
+        private void button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
+        }
+
+        private void button_MouseLeave(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
+        }
     }
 }

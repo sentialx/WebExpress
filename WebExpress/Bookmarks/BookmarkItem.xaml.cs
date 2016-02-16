@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WebExpress.Controls;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
 
 namespace WebExpress.Bookmarks
 {
     /// <summary>
-    /// Interaction logic for BookmarkItem.xaml
+    ///     Interaction logic for BookmarkItem.xaml
     /// </summary>
     public partial class BookmarkItem : UserControl
     {
-        private string _url;
-        private MainWindow mainWindow;
-        private TabView _tv;
-        private Bookmarks bookmarks;
+        private readonly TabView _tv;
+        private readonly string _url;
+        private readonly Bookmarks bookmarks;
+        private readonly MainWindow mainWindow;
 
         public BookmarkItem(string url, string title, TabView tv, MainWindow mw, Bookmarks books)
         {
@@ -41,62 +36,74 @@ namespace WebExpress.Bookmarks
             mainWindow = mw;
             bookmarks = books;
         }
-        public static System.Windows.Media.Color ToMediaColor(System.Drawing.Color color)
+
+        private async void BookmarkItem_Loaded(object sender, RoutedEventArgs e)
         {
-            return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-        }
-        private  void BookmarkItem_Loaded(object sender, RoutedEventArgs e)
-        {
-           Task.Factory.StartNew(DoInBackground);
+            await Task.Run(LoadFavs);
             button.Visibility = Visibility.Hidden;
         }
 
-        private void DoInBackground()
+        private BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
-            Dispatcher.BeginInvoke((Action) (async () =>
+            using (var memory = new MemoryStream())
             {
-                HttpWebRequest request =
-    (HttpWebRequest)HttpWebRequest.Create("http://www.google.com/s2/favicons?domain=" + _url);
-                System.Net.WebResponse response = await request.GetResponseAsync();
-                System.IO.Stream responseStream = response.GetResponseStream();
-                Bitmap bmp = new Bitmap(responseStream);
-                SolidColorBrush brush = new SolidColorBrush(ToMediaColor(bmp.GetPixel(11, 11)));
-                Grid.Background = brush;
-                var imgUrl = new Uri("http://www.google.com/s2/favicons?domain=" + _url);
-                var bitmap2 = new BitmapImage();
-                bitmap2.BeginInit();
-                bitmap2.UriSource = imgUrl;
-                bitmap2.EndInit();
-                image.Source = bitmap2;
-                var foreColor = (PerceivedBrightness(ToMediaColor(bmp.GetPixel(11, 11))) > 130 ? System.Windows.Media.Brushes.Black : System.Windows.Media.Brushes.White);
-                label.Foreground = foreColor;
-            }));
-       
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+                var bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+
+                return bitmapimage;
+            }
         }
 
-        private int PerceivedBrightness(System.Windows.Media.Color c)
+        private Task LoadFavs()
         {
-            return (int)Math.Sqrt(
-            c.R * c.R * .241 +
-            c.G * c.G * .691 +
-            c.B * c.B * .068);
+            return Task.Factory.StartNew(() =>
+            {
+                Dispatcher.BeginInvoke((Action) (async () =>
+                {
+                    var request =
+                        (HttpWebRequest) WebRequest.Create("http://www.google.com/s2/favicons?domain=" + _url);
+                    var response = await request.GetResponseAsync();
+                    var responseStream = response.GetResponseStream();
+                    var bmp = new Bitmap(responseStream);
+                    var brush = new SolidColorBrush(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11)));
+                    Grid.Background = brush;
+                    image.Source = BitmapToImageSource(bmp);
+                    var foreColor = PerceivedBrightness(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11))) > 130
+                        ? Brushes.Black
+                        : Brushes.White;
+                    label.Foreground = foreColor;
+                }));
+            });
         }
-        void ContrastColor(System.Drawing.Color color)
+
+        private int PerceivedBrightness(Color c)
         {
-            int d = 0;
+            return (int) Math.Sqrt(
+                c.R*c.R*.241 +
+                c.G*c.G*.691 +
+                c.B*c.B*.068);
+        }
+
+        private void ContrastColor(System.Drawing.Color color)
+        {
+            var d = 0;
 
 
-            double a = 1 - (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
+            var a = 1 - (0.299*color.R + 0.587*color.G + 0.114*color.B)/255;
 
             if (a < 0.5)
             {
-                label.Foreground = System.Windows.Media.Brushes.Black;
-
+                label.Foreground = Brushes.Black;
             }
-            else {
-                label.Foreground = System.Windows.Media.Brushes.White;
+            else
+            {
+                label.Foreground = Brushes.White;
             }
-
         }
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -106,20 +113,18 @@ namespace WebExpress.Bookmarks
 
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-          
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
-
         }
 
         private void RemoveLines(string fileName, string[] linesToRemove)
         {
-            string[] lines = System.IO.File.ReadAllLines(fileName);
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(fileName))
+            var lines = File.ReadAllLines(fileName);
+            using (var sw = new StreamWriter(fileName))
             {
-                foreach (string line in lines)
+                foreach (var line in lines)
                 {
                     if (Array.IndexOf(linesToRemove, line) == -1)
                     {
@@ -127,7 +132,16 @@ namespace WebExpress.Bookmarks
                     }
                 }
             }
-            loadFavs(mainWindow);
+            foreach (var page in mainWindow.Pages)
+            {
+                try
+                {
+                    Task.Factory.StartNew(() => page.startPage.refreshFavs(mainWindow));
+                }
+                catch
+                {
+                }
+            }
         }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
@@ -139,6 +153,7 @@ namespace WebExpress.Bookmarks
         {
             button.Visibility = Visibility.Hidden;
         }
+
         public void loadFavs(MainWindow mw)
         {
             Dispatcher.BeginInvoke((Action) (() =>
@@ -146,13 +161,13 @@ namespace WebExpress.Bookmarks
                 bookmarks.ItemsCount = 0;
                 bookmarks.RowsCount = 0;
                 bookmarks.mainCanvas.Children.Clear();
-                
+
                 try
                 {
-                    TabView tabView = bookmarks.FindParent<TabView>();
-                    foreach (string s in System.IO.File.ReadAllLines(TabView.Bookspath))
+                    var tabView = bookmarks.FindParent<TabView>();
+                    foreach (var s in File.ReadAllLines(StaticDeclarations.Bookspath))
                     {
-                        string[] split = s.Split((char)42);
+                        var split = s.Split((char) 42);
                         bookmarks.AddBookmark(split[0], split[1], tabView, mw);
                     }
                 }
@@ -162,11 +177,11 @@ namespace WebExpress.Bookmarks
                 }
             }));
         }
+
         private void close_click(object sender, RoutedEventArgs e)
         {
-
-            string[] readText = File.ReadAllLines(TabView.Bookspath);
-            ArrayList arr = new ArrayList();
+            var readText = File.ReadAllLines(StaticDeclarations.Bookspath);
+            var arr = new ArrayList();
             foreach (var sr in readText)
             {
                 arr.Add(sr);
@@ -175,13 +190,13 @@ namespace WebExpress.Bookmarks
             {
                 if (line.Contains(_url))
                 {
-                    string[] lines = { line };
-                    RemoveLines(TabView.Bookspath, lines);
+                    string[] lines = {line};
+                    RemoveLines(StaticDeclarations.Bookspath, lines);
                 }
             }
 
-            string[] readText1 = File.ReadAllLines(TabView.Bookmarkspath);
-            ArrayList arr2 = new ArrayList();
+            var readText1 = File.ReadAllLines(StaticDeclarations.Bookmarkspath);
+            var arr2 = new ArrayList();
             foreach (var sr in readText1)
             {
                 arr.Add(sr);
@@ -190,11 +205,20 @@ namespace WebExpress.Bookmarks
             {
                 if (line.Contains(_url))
                 {
-                    string[] lines = { line };
-                    RemoveLines(TabView.Bookmarkspath, lines);
+                    string[] lines = {line};
+                    RemoveLines(StaticDeclarations.Bookmarkspath, lines);
                 }
             }
-            
+        }
+
+        private void button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
+        }
+
+        private void button_MouseLeave(object sender, MouseEventArgs e)
+        {
+            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
         }
     }
 }

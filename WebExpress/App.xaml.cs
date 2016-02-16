@@ -29,10 +29,13 @@ namespace WebExpress
             {
                 Directory.CreateDirectory(Userdatapath);
             }
-
+            if (!System.IO.Directory.Exists("Extensions"))
+            {
+                System.IO.Directory.CreateDirectory("Extensions");
+            }
             var cefSettings = new CefSettings();
             cefSettings.CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WebExpress\\user data\\Cache");
-
+            cefSettings.SetOffScreenRenderingBestPerformanceArgs();
             cefSettings.UserDataPath = Userdatapath;
             cefSettings.BrowserSubprocessPath = "WebExpress.exe";
             cefSettings.PersistSessionCookies = true;

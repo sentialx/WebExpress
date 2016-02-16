@@ -6,12 +6,33 @@
              xmlns:local="clr-namespace:WebExpress"
              mc:Ignorable="d" 
              d:DesignHeight="26" d:DesignWidth="300">
-    
+    <UserControl.Resources>
+        <Style x:Shared="True" x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderBrush="Transparent" 
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Grid x:Name="TabBar1" SizeChanged="TabBar1_SizeChanged">
 
         <Canvas x:Name="canvas">
-            <Button HorizontalContentAlignment="Center" Padding="0" VerticalContentAlignment="Center" x:Name="AddButton" HorizontalAlignment="Left" VerticalAlignment="Top" Width="26" Height="26" Click="AddButton_Click" BorderThickness="0" FontSize="24" Background="{x:Null}">
-                <TextBlock Text="+" Margin="0,-5,0,0"></TextBlock>
+            <Button Style="{StaticResource ButtonStyle}" HorizontalContentAlignment="Center" Padding="0" VerticalContentAlignment="Center" x:Name="AddButton" HorizontalAlignment="Left" VerticalAlignment="Top" Width="26" Height="26" Click="AddButton_Click" BorderThickness="0" FontSize="24" Background="{x:Null}" Margin="0">
+                <Image Source="pack://application:,,,/Resources/add_tab.png" Margin="3"></Image>
             </Button>
         </Canvas>
     </Grid>
