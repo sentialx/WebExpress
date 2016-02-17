@@ -52,24 +52,7 @@ namespace WebExpress
             catch
             {
             }
-            var fade = new DoubleAnimation
-            {
-                From = ActualHeight,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(0.20)
-            };
-            Storyboard.SetTarget(fade, this);
-            Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
-
-            var sb = new Storyboard();
-            sb.Children.Add(fade);
-            sb.Completed +=
-                (o, e1) =>
-                {
-                    Grid parent = this.Parent as Grid;
-                    parent.Children.Remove(this);
-                };
-            sb.Begin();
+            ExecuteStoryboard();
 
             foreach (TabView tab in mainWindow.Pages)
             {
@@ -77,7 +60,7 @@ namespace WebExpress
             }
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void ExecuteStoryboard()
         {
             var fade = new DoubleAnimation
             {
@@ -97,6 +80,11 @@ namespace WebExpress
                     parent.Children.Remove(this);
                 };
             sb.Begin();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            ExecuteStoryboard();
         }
 
         private void closeButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

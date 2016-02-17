@@ -45,6 +45,7 @@
 
             <wpf:ChromiumWebBrowser.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="Open link in new tab" Click="MenuItem_Click" />
                     <MenuItem Header="Back"
 						Command="{Binding WebBrowser.BackCommand}" />
                     <MenuItem Header="Copy" Command="{Binding WebBrowser.CopyCommand}"/>

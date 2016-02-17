@@ -15,7 +15,7 @@ namespace WebExpress
 {
     public partial class MainWindow : Window
     {
-        private bool Maximized;
+        public bool Maximized;
         private AddBookmark Addbook;
         public List<TabView> Pages;
         private WebClient DLUpdate;
@@ -170,8 +170,9 @@ namespace WebExpress
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
-                DragMove();
+                if (e.ChangedButton == MouseButton.Left)
+                    DragMove();
+
         }
 
         private void OpenNewTab(object sender, ExecutedRoutedEventArgs e)

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace WebExpress
@@ -46,6 +48,7 @@ namespace WebExpress
 
             Dispatcher.BeginInvoke((Action) (() =>
             {
+                mainWindow = mw;
                 tab = new Tab(commandParams.Title, mw, userControl, commandParams.Brush);
 
                 tab.Width = tabWidth;
@@ -110,11 +113,13 @@ namespace WebExpress
                 {
                     tab.bgTab = false;
                     tab.form.Visibility = Visibility.Visible;
+                    
                 }
                 else
                 {
                     tab.bgTab = true;
                     tab.form.Visibility = Visibility.Hidden;
+
                 }
             }
             CalcSizes();

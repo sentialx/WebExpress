@@ -6,7 +6,7 @@
       mc:Ignorable="d" 
       MouseEnter="bg2_MouseEnter"
       MouseLeave="bg2_MouseLeave"
-      d:DesignHeight="26" d:DesignWidth="125" Margin="0">
+      d:DesignHeight="26" d:DesignWidth="125" Margin="0" MouseDown="Me_MouseDown">
 
     <UserControl.Resources>
  

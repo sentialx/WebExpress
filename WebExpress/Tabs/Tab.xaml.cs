@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,10 +23,7 @@ namespace WebExpress
 
         public Brush Color
         {
-            get
-            {
-                return color;
-            }
+            get { return color; }
             set
             {
                 color = value;
@@ -40,7 +39,8 @@ namespace WebExpress
             if (!bgTab)
             {
                 bg.Background = color;
-            } else
+            }
+            else
             {
                 bg.Background = Brushes.Transparent;
             }
@@ -98,7 +98,7 @@ namespace WebExpress
                 _bgTab = value;
                 if (value == true)
                 {
-                    
+
                     bg.Background = Brushes.Transparent;
                     label_TabTitle.Foreground = Brushes.Black;
                     BitmapImage closeBtn = new BitmapImage();
@@ -106,8 +106,10 @@ namespace WebExpress
                     closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab.png");
                     closeBtn.EndInit();
                     CloseImage.Source = closeBtn;
+
                 }
-                else {
+                else
+                {
 
                     bg.Background = color;
                     label_TabTitle.Foreground = actualForeground;
@@ -119,15 +121,18 @@ namespace WebExpress
                         closeBtn.EndInit();
                         CloseImage.Source = closeBtn;
                     }
+
                 }
             }
         }
-        delegate void GetFavDelegate(BitmapImage icon);
+
+
         public void SetIcon(BitmapImage icon)
         {
             this.Dispatcher.BeginInvoke((Action) (() =>
             {
-                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin);
+                label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) -
+                                       (FavIcon.Width + favIconMargin);
                 label_TabTitle.Margin = new Thickness(FavIcon.Width + 6, 1, 0, 0);
                 FavIcon.Source = icon;
             }));
@@ -140,26 +145,27 @@ namespace WebExpress
 
         private void button_close_Click(object sender, RoutedEventArgs e)
         {
-            try {
+            try
+            {
                 Applets.Settings s = form as Applets.Settings;
                 s.SaveSettings();
-            } catch
+            }
+            catch
             {
 
             }
-           Canvas parentForm = this.Parent as Canvas;
-            Grid parentForm2 = parentForm.Parent as Grid;
-           TabBar parentForm3 = parentForm2.Parent as TabBar;
-            parentForm3.RemoveTab(this);
-            
-        }
-
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
             Canvas parentForm = this.Parent as Canvas;
             Grid parentForm2 = parentForm.Parent as Grid;
             TabBar parentForm3 = parentForm2.Parent as TabBar;
-            parentForm3.SelectTab(this);
+            parentForm3.RemoveTab(this);
+
+        }
+
+       
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
 
         private void label_TabTitle_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -175,7 +181,8 @@ namespace WebExpress
             {
                 if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin) > 0)
                 {
-                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) - (FavIcon.Width + favIconMargin);
+                    label_TabTitle.Width = this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) -
+                                           (FavIcon.Width + favIconMargin);
                 }
             }
         }
@@ -195,6 +202,15 @@ namespace WebExpress
             {
                 bg.Background = Brushes.Transparent;
             }
+        }
+
+        private void Me_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Canvas parentForm = this.Parent as Canvas;
+            Grid parentForm2 = parentForm.Parent as Grid;
+            TabBar parentForm3 = parentForm2.Parent as TabBar;
+            parentForm3.SelectTab(this);
+
         }
     }
 }

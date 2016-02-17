@@ -16,7 +16,9 @@ using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Net;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using Color = System.Drawing.Color;
 
 namespace WebExpress
 {
@@ -32,6 +34,7 @@ namespace WebExpress
         private readonly MainWindow mainWindow;
         private readonly char splitChar;
         private bool refreshing;
+        private string target;
         private System.Drawing.Color _color;
         private AddBookmark addbook;
         private List<string> allItems1;
@@ -57,6 +60,7 @@ namespace WebExpress
 
             mainWindow = mw;
             LastWebsite = "";
+            target = "";
             WebView.LifeSpanHandler = this;
             splitChar = (char)42;
             WebView.DownloadHandler = this;
@@ -78,6 +82,7 @@ namespace WebExpress
             Loaded += TabView_Loaded;
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
             WebView.FrameLoadStart += WebView_FrameLoadStart;
+            WebView.StatusMessage += WebView_StatusMessage;
 
             //Method calls
 
@@ -85,6 +90,11 @@ namespace WebExpress
             mw.Pages.Add(this);
 
             urlToLoad = url;
+        }
+
+        private void WebView_StatusMessage(object sender, StatusMessageEventArgs e)
+        {
+            target = e.Value;
         }
 
         private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
@@ -96,6 +106,26 @@ namespace WebExpress
                 startPage.Visibility = Visibility.Hidden;
             }));
         }
+        [DllImport("user32.dll")]
+        static extern IntPtr GetDC(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        static extern Int32 ReleaseDC(IntPtr hwnd, IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        static extern uint GetPixel(IntPtr hdc, int nXPos, int nYPos);
+
+        public System.Drawing.Color GetColorAt(int x, int y)
+        {
+            IntPtr hdc = GetDC(IntPtr.Zero);
+            uint pixel = GetPixel(hdc, x, y);
+            ReleaseDC(IntPtr.Zero, hdc);
+            Color color = Color.FromArgb((int)(pixel & 0x000000FF),
+                         (int)(pixel & 0x0000FF00) >> 8,
+                         (int)(pixel & 0x00FF0000) >> 16);
+            return color;
+        }
+
 
         private void WhiteButtons()
         {
@@ -376,46 +406,55 @@ namespace WebExpress
                         sw.Close();
                     }
                 }
-                if (!LastWebsite.Equals(WebView.Address) && !Title.Contains("WebExpress - history") && !Title.Contains("WebExpress - bookmarks"))
-                    try {
-                        {
-                            string strFileContents = "";
-                            string strDataToAppend = "<style>p { font-family: 'Arial'; } a {color: #606060; text-decoration: none;} a:hover { color: #000; } a:visited { color:#606060; } </style><p><img src='http://www.google.com/s2/favicons?domain=" +
-                                WebView.Address + "' style='width: 16; height:16;'/>" + " " + Title +
-                                "  <a target='_blank' href=" + WebView.Address + ">  -  " + WebView.Address + "</a></p>";
-                            StreamReader srReader = null;
-                            StreamWriter swWriter = null;
-                            srReader = new StreamReader(StaticDeclarations.Historypath);
-                            strFileContents = srReader.ReadToEnd();
-                            srReader.Close();
-
-                            strFileContents = strDataToAppend + Environment.NewLine + strFileContents;
-                            swWriter = new StreamWriter(StaticDeclarations.Historypath, false);
-                            swWriter.Write(strFileContents);
-                            swWriter.Flush();
-
-                            var filePath1 = StaticDeclarations.Suggestionspath;
-                            using (var sw = new StreamWriter(filePath1, true))
-                            {
-                                sw.WriteLine(WebView.Address + splitChar + Title);
-                                sw.Close();
-                            }
-                            LastWebsite = WebView.Address;
-                        }
-                    } catch
-                    {
-
-                    }
-                foreach (TabView page in mainWindow.Pages)
+                try
                 {
-                    try
-                    {
-                        Task.Factory.StartNew(page.LoadSuggestions);
-                    }
-                    catch
-                    {
 
+                    if (!LastWebsite.Equals(WebView.Address) && !Title.Contains("WebExpress - history") &&
+                        !Title.Contains("WebExpress - bookmarks"))
+                    {
+                        string strFileContents = "";
+                        string strDataToAppend =
+                            "<style>p { font-family: 'Arial'; } a {color: #606060; text-decoration: none;} a:hover { color: #000; } a:visited { color:#606060; } </style><p><img src='http://www.google.com/s2/favicons?domain=" +
+                            WebView.Address + "' style='width: 16; height:16;'/>" + " " + Title +
+                            "  <a target='_blank' href=" + WebView.Address + ">  -  " + WebView.Address + "</a></p>";
+                        StreamReader srReader = null;
+                        StreamWriter swWriter = null;
+                        srReader = new StreamReader(StaticDeclarations.Historypath);
+                        strFileContents = srReader.ReadToEnd();
+                        srReader.Close();
+
+                        strFileContents = strDataToAppend + Environment.NewLine + strFileContents;
+                        swWriter = new StreamWriter(StaticDeclarations.Historypath, false);
+                        swWriter.Write(strFileContents);
+                        swWriter.Flush();
+
+                        var filePath1 = StaticDeclarations.Suggestionspath;
+                        using (var sw = new StreamWriter(filePath1, true))
+                        {
+                            sw.WriteLine(WebView.Address + splitChar + Title);
+                            sw.Close();
+                        }
+                        LastWebsite = WebView.Address;
+
+
+                        foreach (TabView page in mainWindow.Pages)
+                        {
+                            try
+                            {
+                                Task.Factory.StartNew(page.LoadSuggestions);
+                            }
+                            catch
+                            {
+
+                            }
+                        }
                     }
+
+                }
+
+                catch
+                {
+
                 }
             }));
         }
@@ -436,20 +475,20 @@ namespace WebExpress
                     Task.Factory.StartNew(() => SetAddress(e.Url));
                     RefreshImage.Source = stopBtn;
                     refreshing = false;
-                    var extensionsPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions";
-                    if(Directory.Exists(extensionsPath))
-                    { 
-                        foreach (string file in System.IO.Directory.GetFiles(extensionsPath, "*.js"))
-                        {
-                            WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
-                        }
-                    }
+
+
                 }
-
+                Task.Factory.StartNew(ChangeColor);
                     Task.Factory.StartNew(WriteHistory);
-               
-
             });
+            var extensionsPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Extensions";
+            if (Directory.Exists(extensionsPath))
+            {
+                foreach (string file in System.IO.Directory.GetFiles(extensionsPath, "*.js"))
+                {
+                    WebView.EvaluateScriptAsync(System.IO.File.ReadAllText(file));
+                }
+            }
         }
 
         private void SetAddress(string text)
@@ -576,40 +615,21 @@ namespace WebExpress
         {
            
         }
+
        
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
-            Dispatcher.BeginInvoke((Action)(async () =>
+            Dispatcher.BeginInvoke((Action)(() =>
             {
                 var bitmap2 = new BitmapImage();
                 try
                 {
                     bitmap2.BeginInit();
                     bitmap2.UriSource = new Uri(urls[0], UriKind.Absolute);
-                    HttpWebRequest request =
-                    (HttpWebRequest)HttpWebRequest.Create(urls[0]);
-                    System.Net.WebResponse response = await request.GetResponseAsync();
-                    System.IO.Stream responseStream =
-                        response.GetResponseStream();
-                    Bitmap bmp = new Bitmap(responseStream);
-                    System.Drawing.Color cc = StaticFunctions.GetDominantColor(bmp);
-                    System.Drawing.Color c2 = System.Drawing.Color.FromArgb(cc.A, Convert.ToInt32(cc.R / 1), Convert.ToInt32(cc.G / 1), Convert.ToInt32(cc.B / 1));
-                    _color = c2;
-                    
+
                     bitmap2.EndInit();
 
-                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(c2.A, c2.R, c2.G, c2.B);
-                    SolidColorBrush brush = new SolidColorBrush(newColor);
-                    mainWindow.TabBar.getTabFromForm(this).Color = brush;
-                    mainWindow.TabBar.getTabFromForm(this).refreshColor();
-
-                    textBox.Background = brush;
-                    Panel.Background = brush;
-                    ListContainer.Background = brush;
-                    listBox.Background = brush;
                     mainWindow.TabBar.getTabFromForm(this).SetIcon(bitmap2);
-
-                    ContrastColor(c2);
                 }
                 catch (Exception ex)
                 {
@@ -617,14 +637,14 @@ namespace WebExpress
                 }
             }));
         }
-        void ContrastColor(System.Drawing.Color color)
+        public void ContrastColor(System.Drawing.Color color)
         {
             int d = 0;
 
              
             double a = 1 - (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
 
-            if (a < 0.5)
+            if (a < 0.4)
             {
                 if (!mainWindow.TabBar.getTabFromForm(this).bgTab) 
                 mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground = System.Windows.Media.Brushes.Black;
@@ -632,7 +652,7 @@ namespace WebExpress
                 mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
                 BlackButtons();
                 SolidColorBrush scb = new SolidColorBrush();
-                scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
+                scb.Color = System.Windows.Media.Color.FromArgb(255, 255, 255, 255);
                 textBox.Background = scb;
                 listBox.Foreground = System.Windows.Media.Brushes.Black;
                 mainWindow.TabBar.getTabFromForm(this).darkColor = false;
@@ -866,6 +886,51 @@ namespace WebExpress
         private void textBox_GotMouseCapture(object sender, MouseEventArgs e)
         {
             textBox.SelectAll();
+        }
+
+        public async Task ChangeColor()
+        {
+            try
+            {
+                await Dispatcher.BeginInvoke((Action)(() =>
+                {
+                        var topLeftCorner = WebView.PointToScreen(new System.Windows.Point(0, 0));
+                        var topLeftGdiPoint = new System.Drawing.Point((int)topLeftCorner.X, (int)topLeftCorner.Y);
+                        var size = new System.Drawing.Size((int)WebView.ActualWidth, (int)WebView.ActualHeight);
+                        Bitmap screenShot = new Bitmap((int)WebView.ActualWidth, (int)WebView.ActualHeight);
+                        using (var graphics = Graphics.FromImage(screenShot))
+                        {
+                            graphics.CopyFromScreen(topLeftGdiPoint, new System.Drawing.Point(), size, CopyPixelOperation.SourceCopy);
+                        }
+                        SolidColorBrush brush = new SolidColorBrush(StaticFunctions.ToMediaColor(screenShot.GetPixel(1,1)));
+                        mainWindow.TabBar.getTabFromForm(this).Color = brush;
+                        mainWindow.TabBar.getTabFromForm(this).refreshColor();
+
+                        textBox.Background = brush;
+                        Panel.Background = brush;
+                        ListContainer.Background = brush;
+                        listBox.Background = brush;
+
+                        
+                        ContrastColor(GetColorAt(Convert.ToInt32(mainWindow.Left + 5),
+                            Convert.ToInt32(mainWindow.Top + 70)));
+                
+                }));
+            }
+            catch
+            {
+
+            }
+        }
+
+
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                ApplicationCommands.New.Execute(new OpenTabCommandParameters(target, "New tab", "#FFF9F9F9"), this);
+            }));
         }
 
     }
