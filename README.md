@@ -14,3 +14,6 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 
 #Engine
 This browser is using CefSharp. You can find it on: https://github.com/cefsharp/CefSharp
+
+#Authors
+This code was created by Eryk Rakowski (Sential)
