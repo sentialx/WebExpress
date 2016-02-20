@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="WebExpress.Bookmarks.BookmarkPanelItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WebExpress.Bookmarks"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="172" MouseDown="UserControl_MouseDown" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave">
+    <UserControl.Resources>
+        <Style x:Shared="True" x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="1"
+                            Padding="2" 
+                            BorderBrush="Transparent" 
+                            CornerRadius="3" 
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid x:Name="Grid" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+        <Button Style="{StaticResource ButtonStyle}" x:Name="button" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,10,10,0" Click="close_click" MouseEnter="button_MouseEnter" MouseLeave="button_MouseLeave">
+            <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_button.png"></Image>
+        </Button>
+        <Label x:Name="label" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Margin="44,37,0,37"/>
+        <Image Source="/WebExpress;component/Resources/menu.png" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="image" Height="16" Width="16" Margin="15,0,0,0"/>
+    </Grid>
+</UserControl>

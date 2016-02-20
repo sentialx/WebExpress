@@ -1,0 +1,40 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WebExpress"
+             xmlns:Bookmarks="clr-namespace:WebExpress.Bookmarks" x:Class="WebExpress.StartPage"
+             mc:Ignorable="d" 
+             d:DesignHeight="1366" d:DesignWidth="1366" Background="#FFF9F9F9">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid VerticalAlignment="Top" Width="780" Height="510" HorizontalAlignment="Center" Margin="0,50,0,0">
+                <Grid UseLayoutRounding="True" x:Name="BookmarksContent" Background="White">
+                    <Grid.Effect>
+                        <DropShadowEffect Direction="270" Opacity="0.2" BlurRadius="15" ShadowDepth="8"/>
+                    </Grid.Effect>
+                    <TextBlock Text="Bookmarks" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="26" Margin="50,20,0,0"></TextBlock>
+                    <Bookmarks:BookmarksPanel x:Name="bookmarks" Width="676" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,40" />
+                </Grid>
+
+            </Grid>
+            <Grid Width="780">
+                <Grid HorizontalAlignment="Left" Height="264" Margin="0,586,0,0" VerticalAlignment="Top" Width="780" Background="White">
+                    <Grid.Effect>
+                        <DropShadowEffect Direction="270" Opacity="0.2" BlurRadius="15" ShadowDepth="8"/>
+                    </Grid.Effect>
+                    <Label x:Name="WeatherHeader" Content="Weather" HorizontalAlignment="Left" Margin="47,20,0,0" VerticalAlignment="Top" FontSize="26"/>
+                    <Label x:Name="City" Content="To configure news and weather" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="21.333" Margin="47,72,0,0"/>
+                    <Label x:Name="State" Content="go to settings." HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" Margin="47,100,0,0" Width="202" Foreground="#FF555555"/>
+                    <Label x:Name="Temp" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" Margin="47,132,0,0" Width="323" Foreground="Black" Background="White"/>
+                    <Image x:Name="WeatherImage"  HorizontalAlignment="Right" Margin="0,0,47,46" Width="250" Height="172" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid x:Name="NewsContainer" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780" Margin="0,882,0,0">
+                    <local:NewsPanel x:Name="News" Height="200" VerticalAlignment="Top" HorizontalAlignment="Left" Width="370" />
+                    <local:NewsPanel x:Name="News2" Height="200" VerticalAlignment="Top" HorizontalAlignment="Right" Width="370" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
