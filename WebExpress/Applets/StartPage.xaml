@@ -6,9 +6,16 @@
              xmlns:local="clr-namespace:WebExpress"
              xmlns:Bookmarks="clr-namespace:WebExpress.Bookmarks" x:Class="WebExpress.StartPage"
              mc:Ignorable="d" 
+                RenderOptions.BitmapScalingMode="LowQuality"
+                RenderOptions.EdgeMode="Unspecified"
+             TextOptions.TextRenderingMode="ClearType"
+    
+    
+            RenderOptions.ClearTypeHint="Enabled"
              d:DesignHeight="1366" d:DesignWidth="1366" Background="#FFF9F9F9">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
+    <ScrollViewer ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+        <Grid Width="780" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid VerticalAlignment="Top" Width="780" Height="510" HorizontalAlignment="Center" Margin="0,50,0,0">
                 <Grid UseLayoutRounding="True" x:Name="BookmarksContent" Background="White">
                     <Grid.Effect>
@@ -30,11 +37,11 @@
                     <Label x:Name="Temp" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="48" Margin="47,132,0,0" Width="323" Foreground="Black" Background="White"/>
                     <Image x:Name="WeatherImage"  HorizontalAlignment="Right" Margin="0,0,47,46" Width="250" Height="172" VerticalAlignment="Bottom"/>
                 </Grid>
-                <Grid x:Name="NewsContainer" VerticalAlignment="Top" HorizontalAlignment="Center" Width="780" Margin="0,882,0,0">
-                    <local:NewsPanel x:Name="News" Height="200" VerticalAlignment="Top" HorizontalAlignment="Left" Width="370" />
-                    <local:NewsPanel x:Name="News2" Height="200" VerticalAlignment="Top" HorizontalAlignment="Right" Width="370" />
-                </Grid>
+                <Canvas x:Name="mainCanvas" VerticalAlignment="Top" HorizontalAlignment="Center" Height="300" Width="780" Margin="0,882,0,0">
+
+                </Canvas>
             </Grid>
         </Grid>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

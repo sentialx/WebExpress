@@ -6,10 +6,7 @@ using System.IO;
 using System.Net;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Windows.Shell;
-using WebExpress.Applets;
-
 
 namespace WebExpress
 {
@@ -20,42 +17,59 @@ namespace WebExpress
         public List<TabView> Pages;
         private WebClient DLUpdate;
         private WebClient JsonDownload;
+        
 
         public void CheckForUpdates()
         {
                 Dispatcher.Invoke(() =>
                 {
-                    DLUpdate = new WebClient();
-                    JsonDownload = new WebClient();
-                    string actualVersion = Convert.ToString(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-                    string link = DLUpdate.DownloadString("http://pastebin.com/raw.php?i=bfs0Jdci");
-                    string newVersion = DLUpdate.DownloadString(link + "WebExpress/update.txt");
-                    DLUpdate.DownloadFileCompleted += DLUpdate_DownloadFileCompleted;
-
-                    var version1 = new Version(actualVersion);
-                    var version2 = new Version(newVersion);
-
-                    var result = version1.CompareTo(version2);
-                    if (result > 0)
-                        Console.WriteLine("version1 is greater");
-                    else if (result < 0)
+                    try
                     {
-                        JsonDownload.DownloadFileAsync(
-                            new Uri(link + "WebExpress/files.json"), "files.json");
-                        this.Hide();
-                        
-                        DLUpdate.DownloadFileAsync(new Uri(link + "WebExpress/Update.exe"),
-                            "Update.exe");
-                    }
-                    else
-                        Console.WriteLine("versions are equal");
-                    return;
+                        DLUpdate = new WebClient();
+                        JsonDownload = new WebClient();
+                        string actualVersion =
+                            Convert.ToString(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+                        string link = DLUpdate.DownloadString("http://pastebin.com/raw.php?i=bfs0Jdci");
+                        string newVersion = DLUpdate.DownloadString(link + "WebExpress/update.txt");
+                        DLUpdate.DownloadFileCompleted += DLUpdate_DownloadFileCompleted;
 
+                        var version1 = new Version(actualVersion);
+                        var version2 = new Version(newVersion);
+
+                        var result = version1.CompareTo(version2);
+                        if (result > 0)
+                            Console.WriteLine("version1 is greater");
+                        else if (result < 0)
+                        {
+                            JsonDownload.DownloadFileAsync(
+                                new Uri(link + "WebExpress/files.json"), "files.json");
+                            this.Hide();
+
+                            DLUpdate.DownloadFileAsync(new Uri(link + "WebExpress/Update.exe"),
+                                "Update.exe");
+                        }
+                        else
+                            Console.WriteLine("versions are equal");
+                        return;
+                    }
+                    catch(Exception ex)
+                    {
+                        
+                    }
                 });
             
             }
-        
 
+        public void HideTabs()
+        {
+            container.Margin = new Thickness(0);
+
+        }
+
+        public void ShowTabs()
+        {
+            container.Margin = new Thickness(0,26,0,0);
+        }
         private void DLUpdate_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             try
@@ -90,12 +104,14 @@ namespace WebExpress
             CheckForUpdates();
 
             Loaded += MainWindow_Loaded;
+
+            Pages = new List<TabView>();
+            Downloads1.Height = 0;
             WindowChrome wc = new WindowChrome();
             WindowChrome.SetWindowChrome(this, wc);
-            Pages = new List<TabView>();
-            Downloads1.Visibility = Visibility.Hidden;
             wc.CaptionHeight = 0;
             wc.UseAeroCaptionButtons = false;
+
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -165,14 +181,7 @@ namespace WebExpress
 
         private void MainGrid_PreviewMouseDown(object sender, EventArgs e)
         {
-            Storyboard sb = this.FindResource("sb") as Storyboard;
-            Storyboard.SetTarget(sb, this.Menu);
-            sb.Begin();
-            sb.Completed +=
-                (o, e1) =>
-                {
-                    Menu.Visibility = Visibility.Hidden;
-                };
+
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -223,6 +232,12 @@ namespace WebExpress
         {
             WindowState = WindowState.Minimized;
             
+        }
+
+        private void container_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            StaticFunctions.AnimateScale(Menu.ActualWidth, Menu.ActualHeight, 0, 0 , Menu, 0.2);
+            StaticFunctions.AnimateFade(1, 0, Menu, 0.3);
         }
     }
 }

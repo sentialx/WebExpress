@@ -2,11 +2,13 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:controls="clr-namespace:WebExpress.Controls"
       mc:Ignorable="d" 
       MouseEnter="bg2_MouseEnter"
       MouseLeave="bg2_MouseLeave"
-      d:DesignHeight="26" d:DesignWidth="125" Margin="0" MouseDown="Me_MouseDown">
+      MouseDown="Grid_MouseDown"
+      d:DesignHeight="26" d:DesignWidth="125" Margin="0"  SizeChanged="Me_SizeChanged">
 
     <UserControl.Resources>
  
@@ -15,17 +17,16 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid MouseDown="Grid_MouseDown" x:Name="bg" Background="LightGray" SizeChanged="label_TabTitle_SizeChanged">
-        <Label Content="TabItem"  Height="23" HorizontalAlignment="Left" 
-          Margin="21,1,0,0" Name="label_TabTitle" VerticalAlignment="Top" 
-          FontFamily="Courier" FontSize="12" Width="75"  />
-
-        <Button x:Name="CloseTab" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right"  Click="button_close_Click" Margin="0,3,4,3">
-            <StackPanel Orientation="Horizontal">
-                <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_Tab.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4,4,4,4"/>
-            </StackPanel>
-        </Button>
-        <Image x:Name="FavIcon" HorizontalAlignment="Left" Height="16" Width="16" VerticalAlignment="Top" Margin="5,5,0,0" />
-
+    <Grid  x:Name="bg" Background="LightGray" SizeChanged="label_TabTitle_SizeChanged">
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" PreviewMouseDown="Me_MouseDown">
+        <Label Content="TabItem" HorizontalAlignment="Left" 
+          Margin="21,-4,0,4" Name="label_TabTitle" VerticalAlignment="Center" Width="75" Opacity="0.87"  />
+        </Grid>
+        <controls:IconButton x:Name="CloseTab" Width="26" Height="26" HorizontalAlignment="Right" PreviewMouseDown="button_close_Click"/>
+            <Image x:Name="FavIcon" HorizontalAlignment="Left" Height="16" Width="16" VerticalAlignment="Top" Margin="5,5,0,0" />
+            
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" Width="26">
+            
+        </Grid>
     </Grid>
 </UserControl>

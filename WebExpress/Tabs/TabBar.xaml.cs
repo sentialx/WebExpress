@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 
 namespace WebExpress
 {
@@ -23,76 +20,102 @@ namespace WebExpress
         private readonly int tabHeight;
         private readonly int tabWidth;
 
+
         public TabBar()
         {
             InitializeComponent();
             TabCount = 0;
             tabHeight = 26;
-            moveButtonDuration = 100;
+
+            moveButtonDuration = 200;
             pixelsSoFar = 0;
             tabWidth = 170;
+            AddButton.SetRippleMargin(3);
+            AddButton.ImageSource("add.png");
+            AddButton.SetImageScale(20);
             AddButtonCount = 1;
             TabCollection = new List<Tab>();
         }
 
-        public void AddTab(OpenTabCommandParameters commandParams, MainWindow mw)
+        public async void AddTab(OpenTabCommandParameters commandParams, MainWindow mw)
         {
-            UserControl userControl;
 
-            if (commandParams.Control == null)
+            if (GetSizes() < 50 && TabCollection.Count > 0)
             {
-                userControl = new TabView(mw, commandParams.Url);
-            }
-            else
-            {
-                userControl = commandParams.Control;
-            }
 
-            Dispatcher.BeginInvoke((Action) (() =>
-            {
-                mainWindow = mw;
-                tab = new Tab(commandParams.Title, mw, userControl, commandParams.Brush);
 
-                tab.Width = tabWidth;
-                tab.Height = tabHeight;
-                canvas.Children.Add(tab);
-                Canvas.SetLeft(tab, TabCount*tabWidth);
-                Canvas.SetTop(tab, 0);
-                Canvas.SetTop(AddButton, 0);
-                if (AddButtonCount == 1)
+            } else
+            {
+                UserControl userControl;
+
+                if (commandParams.Control == null)
                 {
-                    AddButton.BeginAnimation(Canvas.LeftProperty,
-                        new DoubleAnimation(0, AddButtonCount*tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
+                    userControl = new TabView(mw, commandParams.Url);
                 }
                 else
                 {
-                    AddButton.BeginAnimation(Canvas.LeftProperty,
-                        new DoubleAnimation(Canvas.GetLeft(AddButton), AddButtonCount*tabWidth,
-                            TimeSpan.FromMilliseconds(moveButtonDuration)));
+                    userControl = commandParams.Control;
                 }
-                TabCount += 1;
-                AddButtonCount += 1;
-                TabCollection.Add(tab);
 
-                var fade = new DoubleAnimation
+               await Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    From = 0,
-                    To = 1,
-                    Duration = TimeSpan.FromSeconds(0.25)
-                };
-                Storyboard.SetTarget(fade, tab);
-                Storyboard.SetTargetProperty(fade, new PropertyPath(OpacityProperty));
+                    mainWindow = mw;
+                    tab = new Tab(commandParams.Title, mw, userControl, commandParams.Brush);
 
-                var sb = new Storyboard();
-                sb.Children.Add(fade);
-                sb.Completed += (o, e1) =>
+                    tab.Width = tabWidth;
+                    tab.Height = tabHeight;
+                    canvas.Children.Add(tab);
+                    Canvas.SetLeft(tab, TabCount * tabWidth);
+                    Canvas.SetTop(tab, 0);
+                    Canvas.SetTop(AddButton, 0);
+                    if (AddButtonCount == 1)
+                    {
+                        AddButton.BeginAnimation(Canvas.LeftProperty,
+                            new DoubleAnimation(0, AddButtonCount * tabWidth, TimeSpan.FromMilliseconds(moveButtonDuration)));
+                    }
+                    else
+                    {
+                        AddButton.BeginAnimation(Canvas.LeftProperty,
+                            new DoubleAnimation(Canvas.GetLeft(AddButton), AddButtonCount * tabWidth,
+                                TimeSpan.FromMilliseconds(moveButtonDuration)));
+                    }
+                    TabCount += 1;
+                    AddButtonCount += 1;
+                    TabCollection.Add(tab);
+
+                    var fade = new DoubleAnimation
+                    {
+                        From = 26,
+                        To = 0,
+                        Duration = TimeSpan.FromSeconds(0.25)
+                    };
+                    Storyboard.SetTarget(fade, tab);
+                    Storyboard.SetTargetProperty(fade, new PropertyPath(Canvas.TopProperty));
+
+                    var sb = new Storyboard();
+                    sb.Children.Add(fade);
+                    sb.Completed += async (o, e1) =>
+                    {
+                      await CalcSizes();
+                    };
+                    sb.Begin();
+
+
+                }));
+            }
+        }
+
+
+        public Tab getSelectedTab()
+        {
+            foreach (var ctrl in TabCollection)
+            {
+                if (!ctrl.bgTab)
                 {
-                    CalcSizes();
-                };
-                sb.Begin();
-
-                
-            }));
+                    return ctrl;
+                }
+            }
+            return TabCollection[0];
         }
 
         public Tab getTabFromForm(UserControl form)
@@ -107,7 +130,7 @@ namespace WebExpress
             return TabCollection[0];
         }
 
-        public void SelectTab(Tab tabSelect)
+        public async void SelectTab(Tab tabSelect)
         {
             foreach (var tab in TabCollection)
             {
@@ -124,11 +147,11 @@ namespace WebExpress
 
                     }
                 }
-                CalcSizes();
+                await CalcSizes();
             
         }
 
-        public void RemoveTab(Tab tabToRemove)
+        public async void RemoveTab(Tab tabToRemove)
         {
             TabCount = 0;
             AddButtonCount = 1;
@@ -147,7 +170,7 @@ namespace WebExpress
                         TimeSpan.FromMilliseconds(moveButtonDuration)));
                 TabCount += 1;
                 AddButtonCount += 1;
-                CalcSizes();
+                await CalcSizes();
                 tabToRemove.mainWindow.container.Children.Remove(tabToRemove.form);
                 if (tabToRemove.form.GetType() == typeof (TabView))
                 {
@@ -165,39 +188,42 @@ namespace WebExpress
             }
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, MouseButtonEventArgs e)
         {
             //Raise command to open a new tab
             ApplicationCommands.New.Execute(new OpenTabCommandParameters(string.Empty, "New tab", "#FFF9F9F9"), this);
 
         }
 
-        public void CalcSizes()
+        public async Task CalcSizes()
         {
             if ((TabCount == 2 & tabWidth*TabCount > ActualWidth - AddButton.ActualWidth) |
                 (TabCount > 2 & tabWidth*TabCount > ActualWidth - AddButton.ActualWidth))
             {
                 var TabCount1 = 0;
                 var AddButtonCount1 = 1;
-                foreach (var ctrl in TabCollection)
+                for (int i = 0; i < TabCollection.Count; i++)
                 {
                     try
                     {
-                        ctrl.Width = (ActualWidth - AddButton.ActualWidth)/TabCount;
+                        if ((ActualWidth - AddButton.ActualWidth) / TabCount > 1)
+                        {
+                            TabCollection[i].Width = (ActualWidth - AddButton.ActualWidth) / TabCount;
 
-                        AddButton.BeginAnimation(Canvas.LeftProperty,
-                            new DoubleAnimation(AddButtonCount1*ctrl.Width, AddButtonCount1*ctrl.Width,
-                                TimeSpan.FromMilliseconds(moveButtonDuration)));
-                        ctrl.BeginAnimation(Canvas.LeftProperty,
-                            new DoubleAnimation(Canvas.GetLeft(ctrl), TabCount1*ctrl.Width,
-                                TimeSpan.FromMilliseconds(moveButtonDuration)));
+                            AddButton.BeginAnimation(Canvas.LeftProperty,
+                                new DoubleAnimation(AddButtonCount1 * TabCollection[i].Width, AddButtonCount1 * TabCollection[i].Width,
+                                    TimeSpan.FromMilliseconds(moveButtonDuration)));
+                            TabCollection[i].BeginAnimation(Canvas.LeftProperty,
+                                new DoubleAnimation(Canvas.GetLeft(TabCollection[i]), TabCount1 * TabCollection[i].Width,
+                                    TimeSpan.FromMilliseconds(moveButtonDuration)));
 
-                        TabCount1 += 1;
-                        AddButtonCount1 += 1;
+                            TabCount1 += 1;
+                            AddButtonCount1 += 1;
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("CalcSizes error: " + ex.Message);
+                        Console.WriteLine("CalcSizes error: " + ex.Message + " " + ex.Data + " ");
                     }
                 }
             }
@@ -222,7 +248,7 @@ namespace WebExpress
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("CalcSizes error: " + ex.Message);
+                        Console.WriteLine("CalcSizes error: " + ex.Message + " " + ex.Data + " ");
                     }
                 }
             }
@@ -230,9 +256,25 @@ namespace WebExpress
 
         }
 
-        private void TabBar1_SizeChanged(object sender, SizeChangedEventArgs e)
+        private double GetSizes()
         {
-            CalcSizes();
+            double size = 0;
+            if (!TabCollection.Equals(0))
+            {
+                for (int i = 0; i < TabCollection.Count; i++)
+                {
+                    size = TabCollection[i].ActualWidth;
+                }
+            } else
+            {
+                return tabWidth;
+            }
+            return size;
+        }
+
+        private async void TabBar1_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            await CalcSizes();
         }
     }
 }

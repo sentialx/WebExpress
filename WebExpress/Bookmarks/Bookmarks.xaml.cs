@@ -24,14 +24,21 @@ namespace WebExpress.Bookmarks
 
         private void Bookmarks_Loaded(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(StaticDeclarations.Bookmarkspath))
+            try
             {
-                string fileRead = System.IO.File.ReadAllText(StaticDeclarations.Bookmarkspath);
-                dynamic json = JsonConvert.DeserializeObject(fileRead);
-                foreach (dynamic item in json)
+                if (System.IO.File.Exists(StaticDeclarations.Bookmarkspath))
                 {
-                    AddBookmark(Convert.ToString(item.Title), Convert.ToString(item.Url), mainWindow);
+                    string fileRead = System.IO.File.ReadAllText(StaticDeclarations.Bookmarkspath);
+                    dynamic json = JsonConvert.DeserializeObject(fileRead);
+                    foreach (dynamic item in json)
+                    {
+                        AddBookmark(Convert.ToString(item.Title), Convert.ToString(item.Url), mainWindow);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Bookmarks load error: " + ex.Message);
             }
         }
 

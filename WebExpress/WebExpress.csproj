@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.Wpf.47.0.2\build\CefSharp.Wpf.props" Condition="Exists('..\packages\CefSharp.Wpf.47.0.2\build\CefSharp.Wpf.props')" />
-  <Import Project="..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\CefSharp.Wpf.47.0.3\build\CefSharp.Wpf.props" Condition="Exists('..\packages\CefSharp.Wpf.47.0.3\build\CefSharp.Wpf.props')" />
+  <Import Project="..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,22 +69,6 @@
     <ApplicationIcon>WE-LOGO.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.2.0.37226, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -93,10 +77,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -135,7 +115,26 @@
     </Compile>
     <Compile Include="Classes\ControlExtensions.cs" />
     <Compile Include="Classes\JSONClasses.cs" />
+    <Compile Include="Classes\RelayCommand.cs" />
     <Compile Include="Classes\XMLClasses.cs" />
+    <Compile Include="Controls\FlatButton.xaml.cs">
+      <DependentUpon>FlatButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IconButton.xaml.cs">
+      <DependentUpon>IconButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MagicBox.xaml.cs">
+      <DependentUpon>MagicBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MagicBoxItem.xaml.cs">
+      <DependentUpon>MagicBoxItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SnackBar.xaml.cs">
+      <DependentUpon>SnackBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TextIconButton.xaml.cs">
+      <DependentUpon>TextIconButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
@@ -167,8 +166,11 @@
     <Compile Include="News\NewsItem.xaml.cs">
       <DependentUpon>NewsItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="News\NewsPanel.xaml.cs">
-      <DependentUpon>NewsPanel.xaml</DependentUpon>
+    <Compile Include="News\Source.xaml.cs">
+      <DependentUpon>Source.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="News\Sources.xaml.cs">
+      <DependentUpon>Sources.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\TabBar.xaml.cs">
       <DependentUpon>TabBar.xaml</DependentUpon>
@@ -197,6 +199,30 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Bookmarks\BookmarksPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FlatButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\IconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MagicBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MagicBoxItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SnackBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TextIconButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -236,7 +262,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="News\NewsPanel.xaml">
+    <Page Include="News\Source.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="News\Sources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -292,6 +322,11 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\Roboto-Black.ttf" />
+    <Resource Include="Resources\Roboto-Thin.ttf" />
+    <Resource Include="Resources\Roboto-Bold.ttf" />
+    <Resource Include="Resources\Roboto-Medium.ttf" />
+    <Resource Include="Resources\Roboto.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -322,12 +357,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\about.html" />
+    <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\download.png" />
+    <Resource Include="Resources\screen.png" />
+    <Resource Include="Resources\fullscreen-exit.png" />
+    <Resource Include="Resources\fullscreen.png" />
+    <Resource Include="Resources\window.png" />
+    <Resource Include="Resources\privacy.png" />
+    <Resource Include="Resources\dev.png" />
+    <Resource Include="Resources\extension.png" />
+    <Resource Include="Resources\bookmarks.png" />
+    <Resource Include="Resources\history.png" />
+    <Resource Include="Resources\settings.png" />
     <Resource Include="Resources\sun.png" />
     <Resource Include="Resources\snow.png" />
     <Resource Include="Resources\rain.png" />
     <Resource Include="Resources\cloud.png" />
     <Resource Include="WE-LOGO.ico" />
-    <Resource Include="Resources\add_tab.png" />
     <Resource Include="Resources\menu_hover_white.png" />
     <Resource Include="Resources\menu_white.png" />
     <Resource Include="Resources\back_hover.png" />
@@ -360,12 +406,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets'))" />
     <Error Condition="!Exists('..\packages\cef.redist.x86.3.2526.1362\build\cef.redist.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.3.2526.1362\build\cef.redist.x86.targets'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.targets'))" />
-    <Error Condition="!Exists('..\packages\CefSharp.Wpf.47.0.2\build\CefSharp.Wpf.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.47.0.2\build\CefSharp.Wpf.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Wpf.47.0.3\build\CefSharp.Wpf.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.47.0.3\build\CefSharp.Wpf.props'))" />
   </Target>
   <Import Project="..\packages\cef.redist.x86.3.2526.1362\build\cef.redist.x86.targets" Condition="Exists('..\packages\cef.redist.x86.3.2526.1362\build\cef.redist.x86.targets')" />
-  <Import Project="..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.47.0.2\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.47.0.3\build\CefSharp.Common.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

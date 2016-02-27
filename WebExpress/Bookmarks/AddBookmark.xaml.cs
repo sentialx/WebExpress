@@ -23,10 +23,15 @@ namespace WebExpress
             InitializeComponent();
             TitleBox.Text = title;
             _url = url;
+            DoneButton.Text("DONE");
+            CloseButton.ImageSource("close_button.png");
+            CloseButton.SetRippleMargin(1);
+            CloseButton.SetImageScale(16);
+            DoneButton.ChangeTextColor("#FF1ABC9C");
             mainWindow = mw;
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void button_Click(object sender, MouseButtonEventArgs e)
         {
             if (!File.Exists(StaticDeclarations.Bookmarkspath))
             {
@@ -59,60 +64,47 @@ namespace WebExpress
             }
         }
 
-        private void ExecuteStoryboard()
+        public void ExecuteStoryboard()
         {
-            var fade = new DoubleAnimation
+            try
             {
-                From = ActualHeight,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(0.20)
-            };
-            Storyboard.SetTarget(fade, this);
-            Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
-
-            var sb = new Storyboard();
-            sb.Children.Add(fade);
-            sb.Completed +=
-                (o, e1) =>
+                StaticFunctions.AnimateScale(260, 178, 0, 0, this, 0.2);
+                var fade = new DoubleAnimation
                 {
-                    var parent = Parent as Grid;
-                    parent.Children.Remove(this);
+                    From = 1,
+                    To = 0,
+                    Duration = TimeSpan.FromSeconds(0.3)
                 };
-            sb.Begin();
-        }
+                Storyboard.SetTarget(fade, this);
+                Storyboard.SetTargetProperty(fade, new PropertyPath(UIElement.OpacityProperty));
 
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            ExecuteStoryboard();
-        }
+                var sb = new Storyboard();
+                sb.Children.Add(fade);
+                sb.Begin();
 
-        private void closeButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
-        }
 
-        private void closeButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
+                sb.Completed +=
+                    (o, e1) =>
+                    {
+                        var parent = Parent as Grid;
+                        parent.Children.Remove(this);
+                    };
+                sb.Begin();
+            } catch { }
         }
 
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (Visibility == Visibility.Visible)
             {
-                var fade = new DoubleAnimation
-                {
-                    From = 0,
-                    To = 158,
-                    Duration = TimeSpan.FromSeconds(0.20)
-                };
-                Storyboard.SetTarget(fade, this);
-                Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
-
-                var sb = new Storyboard();
-                sb.Children.Add(fade);
-                sb.Begin();
+                StaticFunctions.AnimateScale(0, 0, 260, 178, this, 0.2);
+                StaticFunctions.AnimateFade(0, 1, this, 0.3);
             }
+        }
+
+        private void UIElement_OnPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            ExecuteStoryboard();
         }
     }
 }

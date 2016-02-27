@@ -1,8 +1,8 @@
 ﻿
 using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
-using System.Windows.Media;
 using System;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace WebExpress.Applets
@@ -17,7 +17,7 @@ namespace WebExpress.Applets
 
         }
 
-        private void Settings_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private async void Settings_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             try {
                 dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
@@ -29,9 +29,18 @@ namespace WebExpress.Applets
                 InfoCheck.IsChecked = Convert.ToBoolean(Convert.ToString(dyn.Information));
                 SportCheck.IsChecked = Convert.ToBoolean(Convert.ToString(dyn.Sport));
                 textBox2.Text = dyn.City;
-            } catch
-            {
 
+            } catch (Exception ex)
+            {
+                Console.WriteLine("Load settings error: " + ex.Message + " " + ex.Data);
+            }
+            if (Directory.Exists("News"))
+            {
+                foreach (string file in System.IO.Directory.GetFiles("News", "*.news"))
+                {
+
+                    await Sources.AddSource(file);
+                }
             }
         }
 
@@ -64,16 +73,17 @@ namespace WebExpress.Applets
 
         private void ClearCookiesBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
-        private void ClearHistoryBtn_Click(object sender, RoutedEventArgs e)
+        private async void ClearHistoryBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (System.IO.File.Exists(StaticDeclarations.Historypath))
                 {
                     System.IO.File.Delete(StaticDeclarations.Historypath);
+                    
                 }
             }
             catch (Exception ex)

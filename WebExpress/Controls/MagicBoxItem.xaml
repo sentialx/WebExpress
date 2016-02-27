@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="WebExpress.Controls.MagicBoxItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WebExpress.Controls"
+             mc:Ignorable="d"  
+             
+             SizeChanged="MagicBoxItem_OnSizeChanged"
+             d:DesignHeight="36" d:DesignWidth="415" >
+    <Grid Background="{x:Null}" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" PreviewMouseDown="MagicBoxItem_OnPreviewMouseDown" PreviewMouseUp="UIElement_OnPreviewMouseUp">
+        <Grid Background="#00000000">
+            <Label x:Name="Url" Content="Label" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
+            <Label x:Name="Title" Content="Title" HorizontalAlignment="Left" Margin="0,0,30,0" VerticalAlignment="Center"/>
+            <Ellipse x:Name="Ripple" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border Name="bdrEdge" Grid.ColumnSpan="2" Padding="20" BorderThickness="1" BorderBrush="Black" Visibility="Hidden" Panel.ZIndex="2"></Border>
+        </Grid>
+    </Grid>
+</UserControl>

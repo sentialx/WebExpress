@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress"
-             mc:Ignorable="d" Height="158" Width="260" IsVisibleChanged="UserControl_IsVisibleChanged">
+             xmlns:controls="clr-namespace:WebExpress.Controls"
+             mc:Ignorable="d" Height="177.415" Width="260" IsVisibleChanged="UserControl_IsVisibleChanged">
     <UserControl.Resources>
         <Style x:Shared="True" x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -34,12 +35,10 @@
         <Grid.Effect>
             <DropShadowEffect BlurRadius="15" Opacity="0.2" Direction="-90" ShadowDepth="8"/>
         </Grid.Effect>
-        <Label x:Name="Header" Content="Add bookmark" HorizontalAlignment="Left" Margin="5,1,0,0" VerticalAlignment="Top" Foreground="#444" FontSize="21.333"/>
-        <Label x:Name="Title" Content="Title:" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TitleBox" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top" Margin="50,45,12,0" BorderBrush="#FFE6E6E6"/>
-        <Button x:Name="DoneButton" Content="Done" HorizontalAlignment="Right" Margin="0,76,13,0" VerticalAlignment="Top" Width="75" Background="White" Height="30" BorderBrush="#FFD6D6D6" Click="button_Click"/>
-        <Button Style="{StaticResource ButtonStyle}" x:Name="closeButton" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,12,12,0" Click="button1_Click" MouseEnter="closeButton_MouseEnter" MouseLeave="closeButton_MouseLeave">
-            <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_button.png"></Image>
-        </Button>
+        <Label x:Name="Header" Content="Add bookmark" HorizontalAlignment="Left" Margin="5,1,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="21.333" Opacity="0.87"/>
+        <Label x:Name="Title" Content="Title" HorizontalAlignment="Left" Margin="5,39,0,0" VerticalAlignment="Top" Foreground="#FF1ABC9C" FontFamily="/WebExpress;component/Resources/#Roboto Medium" FontSize="10.667"/>
+        <TextBox x:Name="TitleBox" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top" Margin="10,65,10,0" BorderBrush="#FFE6E6E6" BorderThickness="0,0,0,1"/>
+        <controls:FlatButton  x:Name="DoneButton" HorizontalAlignment="Right" Margin="0,97,10,0" VerticalAlignment="Top" Width="75" Height="30" PreviewMouseUp="button_Click"/>
+        <controls:IconButton x:Name="CloseButton" HorizontalAlignment="Right" Height="26" Width="26" Margin="0,9,9,0" VerticalAlignment="Top" PreviewMouseUp="UIElement_OnPreviewMouseUp"/>
     </Grid>
 </UserControl>

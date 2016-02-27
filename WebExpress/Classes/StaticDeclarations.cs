@@ -12,5 +12,9 @@ namespace WebExpress
         public static string Historypath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "WebExpress\\user data\\history.json");
+
+        public static bool IsIncognito;
+        public static bool IsFullscreen;
+
     }
 }

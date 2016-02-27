@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress"
+             xmlns:controls="clr-namespace:WebExpress.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="26" d:DesignWidth="300">
     <UserControl.Resources>
@@ -30,10 +31,10 @@
     </UserControl.Resources>
     <Grid x:Name="TabBar1" SizeChanged="TabBar1_SizeChanged">
 
-        <Canvas x:Name="canvas">
-            <Button Style="{StaticResource ButtonStyle}" HorizontalContentAlignment="Center" Padding="0" VerticalContentAlignment="Center" x:Name="AddButton" HorizontalAlignment="Left" VerticalAlignment="Top" Width="26" Height="26" Click="AddButton_Click" BorderThickness="0" FontSize="24" Background="{x:Null}" Margin="0">
-                <Image Source="pack://application:,,,/Resources/add_tab.png" Margin="3"></Image>
-            </Button>
+        <Canvas ClipToBounds="True" x:Name="canvas">
+            <controls:IconButton HorizontalContentAlignment="Center" Padding="0" VerticalContentAlignment="Center" x:Name="AddButton" HorizontalAlignment="Left" VerticalAlignment="Top" Width="26" Height="26" PreviewMouseDown="AddButton_Click" BorderThickness="0" FontSize="24" Background="{x:Null}" Margin="0"/>
+
         </Canvas>
     </Grid>
 </UserControl>
+

@@ -10,10 +10,10 @@ namespace WebExpress
     public partial class Downloads : UserControl
     {
         private DownloadItem Item;
-        private readonly int ItemHeight;
-        private readonly List<DownloadItem> Items;
-        private int ItemsCount;
-        private readonly int MarginTop;
+        public readonly int ItemHeight;
+        public readonly List<DownloadItem> Items;
+        public int ItemsCount;
+        public readonly int MarginTop;
 
         public Downloads()
         {
@@ -21,6 +21,8 @@ namespace WebExpress
             ItemsCount = 0;
             ItemHeight = 64;
             MarginTop = 64;
+            button.ImageSource("close_button.png");
+            button.SetRippleMargin(1);
             MaxHeight = MarginTop + 5*ItemHeight;
             Items = new List<DownloadItem>();
         }
@@ -53,24 +55,39 @@ namespace WebExpress
             }));
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void button_Click(object sender, MouseButtonEventArgs e)
         {
-            var fade = new DoubleAnimation
-            {
-                From = ActualHeight,
-                To = 0,
-                Duration = TimeSpan.FromSeconds(0.25)
-            };
-            Storyboard.SetTarget(fade, this);
-            Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
+            StaticFunctions.AnimateScale(ActualWidth,ActualHeight,0,0,this,0.2);
 
-            var sb = new Storyboard();
-            sb.Children.Add(fade);
-            sb.Completed +=
-                (o, e1) => { Visibility = Visibility.Hidden; };
-            sb.Begin();
         }
 
+        public void RefreshDownloads()
+        {
+            ItemsCount = 0;
+
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                foreach (var Item in Items)
+                {
+                    Item.Width = content.ActualWidth;
+                    Item.Height = ItemHeight;
+                    Item.Margin = new Thickness(0, MarginTop + Item.Height * ItemsCount, 0, 0);
+                    ItemsCount += 1;
+                    var fade = new DoubleAnimation
+                    {
+                        From = ActualHeight,
+                        To = 103 + Items.Count * ItemHeight,
+                        Duration = TimeSpan.FromSeconds(0.1)
+                    };
+                    Storyboard.SetTarget(fade, this);
+                    Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
+
+                    var sb = new Storyboard();
+                    sb.Children.Add(fade);
+                    sb.Begin();
+                }
+            }));
+        }
         public void RemoveDownload(DownloadItem di)
         {
             Items.Remove(di);
@@ -101,42 +118,5 @@ namespace WebExpress
             }));
         }
 
-        private void button_MouseEnter(object sender, MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
-        }
-
-        private void button_MouseLeave(object sender, MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
-        }
-
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (Visibility == Visibility.Visible)
-            {
-                double height = 0;
-                if (!ItemsCount.Equals(0))
-                {
-                    height = MarginTop + Items.Count*ItemHeight;
-                }
-                else
-                {
-                    height = MarginTop + 50;
-                }
-                var fade = new DoubleAnimation
-                {
-                    From = 0,
-                    To = height,
-                    Duration = TimeSpan.FromSeconds(0.25)
-                };
-                Storyboard.SetTarget(fade, this);
-                Storyboard.SetTargetProperty(fade, new PropertyPath(HeightProperty));
-
-                var sb = new Storyboard();
-                sb.Children.Add(fade);
-                sb.Begin();
-            }
-        }
     }
 }

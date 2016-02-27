@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebExpress.Controls;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 
@@ -68,18 +65,25 @@ namespace WebExpress.Bookmarks
             {
                 Dispatcher.BeginInvoke((Action) (async () =>
                 {
-                    var request =
-                        (HttpWebRequest) WebRequest.Create("http://www.google.com/s2/favicons?domain=" + _url);
-                    var response = await request.GetResponseAsync();
-                    var responseStream = response.GetResponseStream();
-                    var bmp = new Bitmap(responseStream);
-                    var brush = new SolidColorBrush(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11)));
-                    Grid.Background = brush;
-                    image.Source = BitmapToImageSource(bmp);
-                    var foreColor = PerceivedBrightness(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11))) > 130
-                        ? Brushes.Black
-                        : Brushes.White;
-                    label.Foreground = foreColor;
+                    try
+                    {
+                        var request =
+                            (HttpWebRequest) WebRequest.Create("http://www.google.com/s2/favicons?domain=" + _url);
+                        var response = await request.GetResponseAsync();
+                        var responseStream = response.GetResponseStream();
+                        var bmp = new Bitmap(responseStream);
+                        var brush = new SolidColorBrush(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11)));
+                        Grid.Background = brush;
+                        image.Source = BitmapToImageSource(bmp);
+                        var foreColor = PerceivedBrightness(StaticFunctions.ToMediaColor(bmp.GetPixel(11, 11))) > 130
+                            ? Brushes.Black
+                            : Brushes.White;
+                        label.Foreground = foreColor;
+                    }
+                    catch
+                    {
+                        
+                    }
                 }));
             });
         }
@@ -122,21 +126,6 @@ namespace WebExpress.Bookmarks
         {
         }
 
-        private void RemoveLines(string fileName, string[] linesToRemove)
-        {
-            var lines = File.ReadAllLines(fileName);
-            using (var sw = new StreamWriter(fileName))
-            {
-                foreach (var line in lines)
-                {
-                    if (Array.IndexOf(linesToRemove, line) == -1)
-                    {
-                        sw.WriteLine(line);
-                    }
-                }
-            }
-
-        }
 
         private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {

@@ -4,25 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress"
+             xmlns:controls="clr-namespace:WebExpress.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="350" d:DesignWidth="370">
+             d:DesignHeight="350" d:DesignWidth="244">
     <Grid UseLayoutRounding="True" x:Name="container" Background="White" Margin="10,0,0,0">
         <Grid.Effect>
             <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.2" ShadowDepth="10"/>
         </Grid.Effect>
-        <TextBlock x:Name="label" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap"  FontSize="16"   Width="335" Margin="15,212,0,0" Height="48"><Run Text="Title"/></TextBlock>
-        <Image x:Name="Img" HorizontalAlignment="Stretch" Height="200" VerticalAlignment="Top" Stretch="UniformToFill" />
-        <Button x:Name="ReadMore" Content="Read More" HorizontalAlignment="Right"  Margin="0,0,20,20" VerticalAlignment="Bottom" Width="90" Height="29" Background="White" BorderBrush="{x:Null}" Click="ClearHistoryBtn_Click">
-            <Button.Effect>
+        <TextBlock x:Name="label" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap"  FontSize="16" Height="Auto" Width="209" Margin="15,155,0,0" MaxHeight="64"><Run Text="Title"/></TextBlock>
+        <Image RenderOptions.ClearTypeHint="Enabled" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="LowQuality" x:Name="Img" HorizontalAlignment="Stretch" Height="150" VerticalAlignment="Top" Stretch="UniformToFill" />
+        <controls:FlatButton UseLayoutRounding="True" x:Name="ReadMore" HorizontalAlignment="Right"  Margin="0,0,20,20" VerticalAlignment="Bottom" Width="90" Height="29" Background="#1abc9c" BorderBrush="{x:Null}" PreviewMouseUp="ClearHistoryBtn_Click">
+            <UserControl.Effect>
                 <DropShadowEffect BlurRadius="8" Direction="-90" Opacity="0.3" ShadowDepth="2" />
-            </Button.Effect>
-        </Button>
+            </UserControl.Effect>
+        </controls:FlatButton>
         <Grid x:Name="CategoryPanel" HorizontalAlignment="Left" Height="17" Margin="0,10,0,0" VerticalAlignment="Top" Width="100" Background="Red">
             <Grid.Effect>
                 <DropShadowEffect BlurRadius="15" Opacity="0.3" ShadowDepth="1"/>
             </Grid.Effect>
             <Label x:Name="CategoryLabel" Content="Label" HorizontalAlignment="Left" Margin="5,-5,0,-4" VerticalAlignment="Top" Background="{x:Null}" Foreground="White"/>
         </Grid>
-        <TextBlock x:Name="DescriptionText" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap"   Width="325" Margin="15,260,15,0" Height="32" Background="White" Foreground="#FF646464"><Run Text="Description"/></TextBlock>
+        <TextBlock x:Name="DescriptionText" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap"  FontSize="12" Height="Auto" Width="209" Margin="15,181,0,0" MaxHeight="48" Foreground="#FF616161"><Run Text="Description"/></TextBlock>
     </Grid>
 </UserControl>
+

@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebExpress"
+             xmlns:controls="clr-namespace:WebExpress.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="64" d:DesignWidth="300" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" MouseDown="UserControl_MouseDown" >
+             d:DesignHeight="64" d:DesignWidth="300" MouseEnter="UserControl_MouseEnter" MouseLeave="UserControl_MouseLeave" >
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Open" Click="MenuItem_Click" >
@@ -45,16 +46,18 @@
             <DoubleAnimation Duration="00:00:0.10" BeginTime="0:0:0:0" Storyboard.TargetProperty="Opacity" To="0"  />
         </Storyboard>
     </UserControl.Resources>
-    <Border BorderBrush="#FFE2E2E2" BorderThickness="0,1,0,1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <Grid x:Name="bg"  Background="White">
-
-            <TextBlock x:Name="FileName" Text="File name" FontSize="17.333" Margin="10,6,35,33"/>
-            <TextBlock x:Name="Size" Margin="10,29,30,15" Text="MB" ></TextBlock>
+    <Border BorderBrush="#FFE2E2E2" BorderThickness="0,0,0,1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+        <Grid x:Name="bg" Background="White">
+            <Grid PreviewMouseUp="UserControl_MouseDown" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,35,0">
+                
+            <TextBlock x:Name="FileName" Text="File name" FontSize="17.333" Margin="10,6,0,33"/>
+            <TextBlock x:Name="Size" Margin="10,29,0,15" Text="MB" ></TextBlock>
+            
+            </Grid>
+            <controls:IconButton x:Name="button" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,9,10,0" PreviewMouseDown="button_Click"/>
             <Grid x:Name="ProgressBar" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="5" Background="#1abc9c" Margin="0,0,0,-1"/>
-            <Button Style="{StaticResource ButtonStyle}" x:Name="button" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,9,10,0" Click="button_Click" MouseEnter="button_MouseEnter" MouseLeave="button_MouseLeave">
-                <Image x:Name="CloseImage" Source="pack://application:,,,/Resources/close_button.png" Margin="1" ></Image>
-            </Button>
         </Grid>
         
     </Border>
 </UserControl>
+

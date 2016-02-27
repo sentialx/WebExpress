@@ -8,17 +8,24 @@ using System.Windows.Media.Imaging;
 using CefSharp;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using UserControl = System.Windows.Controls.UserControl;
-using System.Windows.Media.Animation;
 using System.Drawing;
+using System.Net;
 using System.Threading;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CefSharp.Wpf;
-using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
+using WebExpress.Classes;
+using WebExpress.Controls;
+using ContextMenu = System.Windows.Controls.ContextMenu;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using MenuItem = System.Windows.Controls.MenuItem;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+
 namespace WebExpress
 {
+
     public partial class TabView : UserControl, IDisplayHandler, IDownloadHandler, ILifeSpanHandler, IContextMenuHandler
     {
 
@@ -36,18 +43,7 @@ namespace WebExpress
         private AddBookmark addbook;
         private List<string> allItems1;
 
-        private BitmapImage backBtn;
-        private BitmapImage backBtnHover;
-        private BitmapImage forwardBtn;
-        private BitmapImage forwardBtnHover;
-        private BitmapImage refreshBtn;
-        private BitmapImage refreshBtnHover;
-        private BitmapImage menuBtn;
-        private BitmapImage menuBtnHover;
-        private BitmapImage bookmarkBtn;
-        private BitmapImage bookmarkBtnHover;
-        private BitmapImage stopBtn;
-        private BitmapImage closeBtn;
+        private string StopButton;
 
         public TabView(MainWindow mw, string url)
         {
@@ -58,6 +54,7 @@ namespace WebExpress
             mainWindow = mw;
             LastWebsite = "";
             target = "";
+
             WebView.LifeSpanHandler = this;
             splitChar = (char) 42;
             WebView.DownloadHandler = this;
@@ -68,9 +65,9 @@ namespace WebExpress
             s1.ApplicationCache = CefState.Enabled;
             WebView.BrowserSettings = s1;
             refreshing = false;
+            SnackBar.Visibility = Visibility.Hidden;
             allItems1 = new List<string>();
             WebView.MenuHandler = this;
-
 
             //Events
 
@@ -79,7 +76,6 @@ namespace WebExpress
             Loaded += TabView_Loaded;
             WebView.IsBrowserInitializedChanged += WebView_IsBrowserInitializedChanged;
             WebView.FrameLoadStart += WebView_FrameLoadStart;
-            WebView.StatusMessage += WebView_StatusMessage;
 
             //Method calls
 
@@ -88,219 +84,51 @@ namespace WebExpress
 
             urlToLoad = url;
         }
-
-        private void WebView_StatusMessage(object sender, StatusMessageEventArgs e)
+        private async void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
-            target = e.Value;
-        }
-
-        private void WebView_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
-        {
-            Dispatcher.BeginInvoke((Action) (() =>
+            await Dispatcher.BeginInvoke((Action) (() =>
             {
-                RefreshImage.Source = stopBtn;
+
+
+                RefreshButton.ImageSource(StopButton);
                 refreshing = true;
                 startPage.Visibility = Visibility.Hidden;
             }));
         }
 
 
-        private void WhiteButtons()
+        private async Task WhiteButtons()
         {
-            //Buttons Images
 
-            //Back button
-
-            backBtn = new BitmapImage();
-            backBtn.BeginInit();
-            backBtn.UriSource = new Uri("pack://application:,,,/Resources/back_white.png");
-            backBtn.EndInit();
-
-            //Back button hover
-
-            backBtnHover = new BitmapImage();
-            backBtnHover.BeginInit();
-            backBtnHover.UriSource = new Uri("pack://application:,,,/Resources/back_hover_white.png");
-            backBtnHover.EndInit();
-
-            //Forward button
-
-            forwardBtn = new BitmapImage();
-            forwardBtn.BeginInit();
-            forwardBtn.UriSource = new Uri("pack://application:,,,/Resources/forward_white.png");
-            forwardBtn.EndInit();
-
-            //Forward button hover
-
-            forwardBtnHover = new BitmapImage();
-            forwardBtnHover.BeginInit();
-            forwardBtnHover.UriSource = new Uri("pack://application:,,,/Resources/forward_white_hover.png");
-            forwardBtnHover.EndInit();
-
-            //Refresh button
-
-            refreshBtn = new BitmapImage();
-            refreshBtn.BeginInit();
-            refreshBtn.UriSource = new Uri("pack://application:,,,/Resources/reload_white.png");
-            refreshBtn.EndInit();
-
-            //Refresh button hover
-
-            refreshBtnHover = new BitmapImage();
-            refreshBtnHover.BeginInit();
-            refreshBtnHover.UriSource = new Uri("pack://application:,,,/Resources/reload_hover_white.png");
-            refreshBtnHover.EndInit();
-
-            //Menu button
-
-            menuBtn = new BitmapImage();
-            menuBtn.BeginInit();
-            menuBtn.UriSource = new Uri("pack://application:,,,/Resources/menu_white.png");
-            menuBtn.EndInit();
-
-            //Menu button hover
-
-            menuBtnHover = new BitmapImage();
-            menuBtnHover.BeginInit();
-            menuBtnHover.UriSource = new Uri("pack://application:,,,/Resources/menu_hover_white.png");
-            menuBtnHover.EndInit();
-
-            //Bookmark button
-
-            bookmarkBtn = new BitmapImage();
-            bookmarkBtn.BeginInit();
-            bookmarkBtn.UriSource = new Uri("pack://application:,,,/Resources/bookmark_white.png");
-            bookmarkBtn.EndInit();
-
-            //Bookmark button hover
-
-            bookmarkBtnHover = new BitmapImage();
-            bookmarkBtnHover.BeginInit();
-            bookmarkBtnHover.UriSource = new Uri("pack://application:,,,/Resources/bookmark_hover_White.png");
-            bookmarkBtnHover.EndInit();
-
-            //Stop button
-
-            stopBtn = new BitmapImage();
-            stopBtn.BeginInit();
-            stopBtn.UriSource = new Uri("pack://application:,,,/Resources/stop_white.png");
-            stopBtn.EndInit();
-
-            //Close button
-
-            closeBtn = new BitmapImage();
-            closeBtn.BeginInit();
-            closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab_white.png");
-            closeBtn.EndInit();
-
-            //Image set for buttons
-
-            BackImage.Source = backBtn;
-            ForwardImage.Source = forwardBtn;
-            RefreshImage.Source = refreshBtn;
-            MenuImage.Source = menuBtn;
-            BookmarkImage.Source = bookmarkBtn;
-            mainWindow.TabBar.getTabFromForm(this).CloseImage.Source = closeBtn;
+            MenuButton.ImageSource("menu_white.png");
+            MenuButton.RippleColor(Colors.White);
+            Back.ImageSource("back_white.png");
+            Back.RippleColor(Colors.White);
+            Forward.ImageSource("forward_white.png");
+            Forward.RippleColor(Colors.White);
+            RefreshButton.ImageSource("reload_white.png");
+            RefreshButton.RippleColor(Colors.White);
+            BookmarkButton.ImageSource("bookmark_white.png");
+            BookmarkButton.RippleColor(Colors.White);
+            StopButton = "stop_white.png";
+            mainWindow.TabBar.getTabFromForm(this).CloseTab.ImageSource("close_Tab_white.png");
         }
 
 
-        private void BlackButtons()
+        private async Task BlackButtons()
         {
-            //Buttons Images
-
-            //Back button
-
-            backBtn = new BitmapImage();
-            backBtn.BeginInit();
-            backBtn.UriSource = new Uri("pack://application:,,,/Resources/back.png");
-            backBtn.EndInit();
-
-            //Back button hover
-
-            backBtnHover = new BitmapImage();
-            backBtnHover.BeginInit();
-            backBtnHover.UriSource = new Uri("pack://application:,,,/Resources/back_hover.png");
-            backBtnHover.EndInit();
-
-            //Forward button
-
-            forwardBtn = new BitmapImage();
-            forwardBtn.BeginInit();
-            forwardBtn.UriSource = new Uri("pack://application:,,,/Resources/forward.png");
-            forwardBtn.EndInit();
-
-            //Forward button hover
-
-            forwardBtnHover = new BitmapImage();
-            forwardBtnHover.BeginInit();
-            forwardBtnHover.UriSource = new Uri("pack://application:,,,/Resources/forward_hover.png");
-            forwardBtnHover.EndInit();
-
-            //Refresh button
-
-            refreshBtn = new BitmapImage();
-            refreshBtn.BeginInit();
-            refreshBtn.UriSource = new Uri("pack://application:,,,/Resources/reload.png");
-            refreshBtn.EndInit();
-
-            //Refresh button hover
-
-            refreshBtnHover = new BitmapImage();
-            refreshBtnHover.BeginInit();
-            refreshBtnHover.UriSource = new Uri("pack://application:,,,/Resources/reload_hover.png");
-            refreshBtnHover.EndInit();
-
-            //Menu button
-
-            menuBtn = new BitmapImage();
-            menuBtn.BeginInit();
-            menuBtn.UriSource = new Uri("pack://application:,,,/Resources/menu.png");
-            menuBtn.EndInit();
-
-            //Menu button hover
-
-            menuBtnHover = new BitmapImage();
-            menuBtnHover.BeginInit();
-            menuBtnHover.UriSource = new Uri("pack://application:,,,/Resources/menu_hover.png");
-            menuBtnHover.EndInit();
-
-            //Bookmark button
-
-            bookmarkBtn = new BitmapImage();
-            bookmarkBtn.BeginInit();
-            bookmarkBtn.UriSource = new Uri("pack://application:,,,/Resources/bookmark.png");
-            bookmarkBtn.EndInit();
-
-            //Bookmark button hover
-
-            bookmarkBtnHover = new BitmapImage();
-            bookmarkBtnHover.BeginInit();
-            bookmarkBtnHover.UriSource = new Uri("pack://application:,,,/Resources/bookmark_hover.png");
-            bookmarkBtnHover.EndInit();
-
-            //Stop button
-
-            stopBtn = new BitmapImage();
-            stopBtn.BeginInit();
-            stopBtn.UriSource = new Uri("pack://application:,,,/Resources/stop.png");
-            stopBtn.EndInit();
-
-            //Close button
-
-            closeBtn = new BitmapImage();
-            closeBtn.BeginInit();
-            closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab.png");
-            closeBtn.EndInit();
-
-
-            //Image set for buttons
-
-            BackImage.Source = backBtn;
-            ForwardImage.Source = forwardBtn;
-            RefreshImage.Source = refreshBtn;
-            MenuImage.Source = menuBtn;
-            BookmarkImage.Source = bookmarkBtn;
-            mainWindow.TabBar.getTabFromForm(this).CloseImage.Source = closeBtn;
+            MenuButton.ImageSource("menu.png");
+            MenuButton.RippleColor(Colors.Black);
+            Back.ImageSource("back.png");
+            Back.RippleColor(Colors.Black);
+            Forward.ImageSource("forward.png");
+            Forward.RippleColor(Colors.Black);
+            RefreshButton.ImageSource("reload.png");
+            RefreshButton.RippleColor(Colors.Black);
+            BookmarkButton.ImageSource("bookmark.png");
+            BookmarkButton.RippleColor(Colors.Black);
+            StopButton = "stop.png";
+            mainWindow.TabBar.getTabFromForm(this).CloseTab.ImageSource("close_Tab.png");
         }
 
         private void WebView_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -315,22 +143,22 @@ namespace WebExpress
             }
         }
 
-        private void TabView_Loaded(object sender, RoutedEventArgs e)
+        private async void TabView_Loaded(object sender, RoutedEventArgs e)
         {
-            Task.Factory.StartNew(LoadSuggestions);
-            BlackButtons();
-            startPage.LoadFavs(mainWindow);
+            await Task.Factory.StartNew(LoadSuggestions);
+            await BlackButtons();
+            await startPage.LoadFavs(mainWindow);
             textBox.Focus();
         }
 
-        private void LoadSuggestions()
+        private async Task LoadSuggestions()
         {
-            Dispatcher.BeginInvoke((Action) (() =>
+            await Dispatcher.BeginInvoke((Action) (() =>
             {
                 try
                 {
 
-                    listBox.Items.Clear();
+                    MagicBox.Clear();
                     allItems1.Clear();
 
                     if (System.IO.File.Exists(StaticDeclarations.Historypath))
@@ -339,79 +167,76 @@ namespace WebExpress
                         dynamic json = JsonConvert.DeserializeObject(readFile);
                         foreach (dynamic item in json)
                         {
-                            if (Convert.ToString((string) item.Url).Contains("#q="))
-                            {
-                                listBox.Items.Add(Convert.ToString(item.Title));
-                                allItems1.Add(Convert.ToString(item.Title));
-                            }
-                            else
-                            {
-                                listBox.Items.Add(Convert.ToString(item.Url) + " - " + Convert.ToString(item.Title));
-                                allItems1.Add(Convert.ToString(item.Url) + " - " + Convert.ToString(item.Title));
-                            }
+                                MagicBox.AddSuggestion(Convert.ToString(item.Title), Convert.ToString(item.Url), mainWindow);
+                                allItems1.Add(Convert.ToString(item.Url) + "*" + Convert.ToString(item.Title));
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Load suggestions error: " + ex.Message);
+                    Console.WriteLine("Load suggestions error: " + ex.Message + " " + ex.Data);
                 }
             }));
         }
 
-        public void WriteHistory()
+        public async Task WriteHistory()
         {
-            Dispatcher.BeginInvoke((Action) (() =>
+           await Dispatcher.BeginInvoke((Action) (() =>
             {
-                try
+                if (!StaticDeclarations.IsIncognito)
                 {
-                    if (!LastWebsite.Equals(WebView.Address))
+                    try
                     {
-                        if (!System.IO.File.Exists(StaticDeclarations.Historypath))
+                        if (!LastWebsite.Equals(WebView.Address))
                         {
-                            var history = new HistItem();
-                            history.Title = Title;
-                            history.Url = WebView.Address;
-                            var histories = new List<HistItem>();
-                            histories.Add(history);
-                            var newJson = JsonConvert.SerializeObject(histories);
-                            File.WriteAllText(StaticDeclarations.Historypath, newJson);
+                            if (!System.IO.File.Exists(StaticDeclarations.Historypath))
+                            {
+                                var history = new HistItem();
+                                history.Title = Title;
+                                history.Url = WebView.Address;
+                                var histories = new List<HistItem>();
+                                histories.Add(history);
+                                var newJson = JsonConvert.SerializeObject(histories);
+                                File.WriteAllText(StaticDeclarations.Historypath, newJson);
 
-                            LastWebsite = WebView.Address;
+                                LastWebsite = WebView.Address;
+                            }
+                            else
+                            {
+                                HistItem history = new HistItem();
+                                history.Title = Title;
+                                history.Url = WebView.Address;
+                                string json = File.ReadAllText(StaticDeclarations.Historypath);
+                                List<HistItem> histories = JsonConvert.DeserializeObject<List<HistItem>>(json);
+                                histories.Add(history);
+                                string newJson = JsonConvert.SerializeObject(histories);
+                                File.WriteAllText(StaticDeclarations.Historypath, newJson);
+
+                                LastWebsite = WebView.Address;
+                            }
                         }
-                        else
-                        {
-                            HistItem history = new HistItem();
-                            history.Title = Title;
-                            history.Url = WebView.Address;
-                            string json = File.ReadAllText(StaticDeclarations.Historypath);
-                            List<HistItem> histories = JsonConvert.DeserializeObject<List<HistItem>>(json);
-                            histories.Add(history);
-                            string newJson = JsonConvert.SerializeObject(histories);
-                            File.WriteAllText(StaticDeclarations.Historypath, newJson);
-
-                            LastWebsite = WebView.Address;
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Write history error: " + ex.Message);
-                }
-                try
-                {
-                    foreach (TabView page in mainWindow.Pages)
-                    {
-
-                        Task.Factory.StartNew(page.LoadSuggestions);
 
                     }
-                }
-                catch
-                {
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Write history error: " + ex.Message + " " + ex.Data);
+                    }
+                    try
+                    {
+                        foreach (TabView page in mainWindow.Pages)
+                        {
+
+                            Task.Factory.StartNew(page.LoadSuggestions);
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Load suggestions in each TabView error: " + ex.Message + " " + ex.Data);
+                    }
                 }
             }));
+
         }
 
 
@@ -428,7 +253,7 @@ namespace WebExpress
                 if (e.Frame.IsMain)
                 {
                     Task.Factory.StartNew(() => SetAddress(e.Url));
-                    RefreshImage.Source = stopBtn;
+                    RefreshButton.ImageSource("reload.png");
                     refreshing = false;
 
                     if (Directory.Exists("Extensions"))
@@ -439,34 +264,22 @@ namespace WebExpress
                             Console.WriteLine(System.IO.File.ReadAllText(file));
                         }
                     }
+                    HideSuggestions();
+                    Task.Factory.StartNew(WriteHistory);
                 }
+
                 Task.Factory.StartNew(ChangeColor);
-                Task.Factory.StartNew(WriteHistory);
+
             });
         }
 
-        private void SetAddress(string text)
-        {
-            Dispatcher.BeginInvoke((Action) (() => { textBox.Text = text; }));
-        }
+        private void SetAddress(string text) {Dispatcher.BeginInvoke((Action) (() => { textBox.Text = text; }));}
+        public void Shutdown() {WebView.Dispose();}
+        public void HideSuggestions() {ListContainer.Visibility = Visibility.Hidden;}
+        public void ShowSuggestions()
+        {Panel.Effect = null; ListContainer.Visibility = Visibility.Visible; }
 
-        public void Shutdown()
-        {
-            WebView.Dispose();
-        }
-
-        private void HideSuggestions()
-        {
-            ListContainer.Visibility = Visibility.Hidden;
-        }
-
-        private void ShowSuggestions()
-        {
-            Panel.Effect = null;
-            ListContainer.Visibility = Visibility.Visible;
-        }
-
-        private void textBox_KeyDown(object sender, KeyEventArgs e)
+        private async void textBox_KeyDown(object sender, KeyEventArgs e)
         {
             try
             {
@@ -476,28 +289,29 @@ namespace WebExpress
 
                     if (string.IsNullOrEmpty(textBox.Text.Trim()) == false)
                     {
-                        listBox.Items.Clear();
+                        MagicBox.Clear();
                         foreach (string str in allItems1)
                         {
                             if (str.Contains(textBox.Text.Trim()))
                             {
-                                listBox.Items.Add(str);
+                                string[] split = str.Split(splitChar);
+                               await MagicBox.AddSuggestion(split[1], split[0], mainWindow);
                             }
                         }
                     }
 
                     else if (textBox.Text.Trim() == "")
                     {
-                        listBox.Items.Clear();
+                        MagicBox.Clear();
 
                         foreach (string str in allItems1)
                         {
-                            listBox.Items.Add(str);
+                            string[] split = str.Split(splitChar);
+                            await MagicBox.AddSuggestion(split[1], split[0], mainWindow);
                         }
                     }
 
-
-                    ListContainer.Height = listBox.Items.Count*34;
+                    StaticFunctions.AnimateHeight(ListContainer.Height, MagicBox.ItemsCount * MagicBox.ItemHeight, ListContainer, 0.2);
                 }
                 else
                 {
@@ -507,10 +321,13 @@ namespace WebExpress
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Listbox1 error: " + ex.Message);
+                Console.WriteLine("Listbox find suggestions error: " + ex.Message + " " + ex.Data);
             }
 
-
+            if (e.Key == Key.Down)
+            {
+                MagicBox.Focus();
+            }
             if (e.Key == Key.Enter)
             {
                 dynamic textArray = textBox.Text.Split();
@@ -531,56 +348,32 @@ namespace WebExpress
                             WebView.Load(textBox.Text);
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        
+                        Console.WriteLine("textBox KeyDown Key.Enter error: " + ex.Message + " " + ex.Data);
                     }
                 }
                 HideSuggestions();
             }
+
         }
 
-        private void Back_Click(object sender, RoutedEventArgs e)
+        private void Back_Click(object sender, MouseButtonEventArgs e)
         {
             WebView.Back();
         }
 
-        private void Forward_Click(object sender, RoutedEventArgs e)
+        private void Forward_Click(object sender, MouseButtonEventArgs e)
         {
             WebView.Forward();
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
+        private void Refresh_Click(object sender, MouseButtonEventArgs e)
         {
-            WebView.Reload();
-        }
-
-        private void listBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            try
-            {
-                string[] split = listBox.SelectedItem.ToString().Split(splitChar);
-                if (!split[0].Contains("http://") | !split[0].Contains("https://"))
-                {
-                    string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
-                    dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
-                    if (dyn.SE == "Google")
-                    {
-                        WebView.Load("https://google.com/#q=" + split1[0]);
-                    }
-                }
-
-                if (split[0].Contains("http://") | split[0].Contains("https://"))
-                {
-                    string[] split1 = listBox.SelectedItem.ToString()
-                        .Split(new string[] {" - "}, StringSplitOptions.None);
-                    WebView.Load(split1[0]);
-                }
-                HideSuggestions();
-            }
-            catch
-            {
-            }
+            if (refreshing)
+                WebView.Stop();
+            else
+                WebView.Reload();
         }
 
         private void WebView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -590,33 +383,31 @@ namespace WebExpress
 
         public void OnAddressChanged(IWebBrowser browserControl, AddressChangedEventArgs addressChangedArgs)
         {
-            Thread thread = new Thread(new ThreadStart(delegate()
+            RefreshColor();
+            SetAddress(addressChangedArgs.Address);
+        }
+
+        public void RefreshColor()
+        {
+            Thread thread = new Thread(new ThreadStart(async delegate()
             {
-                Thread.Sleep(200); // this is important ...
+                Thread.Sleep(200);
                 try
                 {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
+                    await this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
                         new ThreadStart(async delegate()
                         {
                             await ChangeColor();
                             this.Refresh();
                         }));
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine("Address Changed error: " + ex.Message + " " + ex.Data);
                 }
-            }));
-            thread.Name = "thread-UpdateText";
+            })) {Name = "thread-UpdateText"};
             thread.Start();
-
         }
-    
-
-
-        public void OnTitleChanged(IWebBrowser browserControl, TitleChangedEventArgs titleChangedArgs)
-        {
-        }
-
 
         public void OnFaviconUrlChange(IWebBrowser browserControl, IBrowser browser, IList<string> urls)
         {
@@ -634,46 +425,9 @@ namespace WebExpress
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Favicon: " + ex.Message);
+                    Console.WriteLine("Favicon load error: " + ex.Message + " " + ex.Data);
                 }
             }));
-        }
-
-        public void ContrastColor(System.Drawing.Color color)
-        {
-            int d = 0;
-
-
-            double a = 1 - (0.299*color.R + 0.587*color.G + 0.114*color.B)/255;
-
-            if (a < 0.4)
-            {
-                if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
-                    mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground =
-                        System.Windows.Media.Brushes.Black;
-                textBox.Foreground = System.Windows.Media.Brushes.Black;
-                mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
-                BlackButtons();
-                SolidColorBrush scb = new SolidColorBrush();
-                scb.Color = System.Windows.Media.Color.FromArgb(255, 255, 255, 255);
-                textBox.Background = scb;
-                listBox.Foreground = System.Windows.Media.Brushes.Black;
-                mainWindow.TabBar.getTabFromForm(this).darkColor = false;
-            }
-            else
-            {
-                if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
-                    mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground =
-                        System.Windows.Media.Brushes.White;
-                textBox.Foreground = System.Windows.Media.Brushes.White;
-                WhiteButtons();
-                listBox.Foreground = System.Windows.Media.Brushes.White;
-                SolidColorBrush scb = new SolidColorBrush();
-                scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
-                textBox.Background = scb;
-                mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.White;
-                mainWindow.TabBar.getTabFromForm(this).darkColor = true;
-            }
         }
 
         public void OnFullscreenModeChange(IWebBrowser browserControl, IBrowser browser, bool fullscreen)
@@ -693,89 +447,12 @@ namespace WebExpress
             }));
         }
 
-        public bool OnTooltipChanged(IWebBrowser browserControl, string text)
+        private void MenuButton_Click(object sender, MouseButtonEventArgs e)
         {
-            return true;
-        }
-
-        public void OnStatusMessage(IWebBrowser browserControl, StatusMessageEventArgs statusMessageArgs)
-        {
-
-        }
-
-        public bool OnConsoleMessage(IWebBrowser browserControl, ConsoleMessageEventArgs consoleMessageArgs)
-        {
-            return true;
-        }
-
-        private void textBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Down:
-                    ShowSuggestions();
-                    listBox.Focus();
-                    listBox.SelectedIndex = 0;
-                    break;
-
-                case Key.Enter:
-                    try
-                    {
-                        string[] split = listBox.SelectedItem.ToString().Split(splitChar);
-                        WebView.Load(split[0]);
-                        HideSuggestions();
-                    }
-                    catch
-                    {
-                    }
-                    break;
-            }
-        }
-
-        private void listBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Enter:
-                    string[] split = listBox.SelectedItem.ToString().Split(splitChar);
-                    if (!split[0].Contains("http://") | !split[0].Contains("https://"))
-                    {
-                        string[] split1 = listBox.SelectedItem.ToString().Split(splitChar);
-                        dynamic dyn = JsonConvert.DeserializeObject(System.IO.File.ReadAllText("settings.json"));
-                        if (dyn.SE == "Google")
-                        {
-                            WebView.Load("https://google.com/#q=" + split1[0]);
-                        }
-                    }
-
-                    if (split[0].Contains("http://") | split[0].Contains("https://"))
-                    {
-                        string[] split1 = listBox.SelectedItem.ToString()
-                            .Split(new string[] {" - "}, StringSplitOptions.None);
-                        WebView.Load(split1[0]);
-                    }
-                    HideSuggestions();
-                    break;
-
-                case Key.Up:
-                    if (listBox.SelectedIndex == 0)
-                    {
-                        textBox.Focus();
-                    }
-                    listBox.Items.MoveCurrentToPrevious();
-                    break;
-            }
-        }
-
-        private void MenuButton_Click(object sender, RoutedEventArgs e)
-        {
-            mainWindow.Menu.Height = 0;
             mainWindow.Menu.Visibility = Visibility.Visible;
-            Storyboard sb = mainWindow.FindResource("sb2") as Storyboard;
-            Storyboard.SetTarget(sb, mainWindow.Menu);
-            sb.Begin();
+            StaticFunctions.AnimateScale(0,0, 225, 400, mainWindow.Menu, 0.2);
+            StaticFunctions.AnimateFade(0, 1, mainWindow.Menu, 0.3);
         }
-
 
         public void OnBeforeDownload(IBrowser browser, CefSharp.DownloadItem downloadItem,
             IBeforeDownloadCallback callback)
@@ -785,13 +462,23 @@ namespace WebExpress
                 mainWindow.Downloads1.AddDownload(downloadItem.Url,
                     Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
                     downloadItem.SuggestedFileName);
-                mainWindow.Downloads1.Visibility = Visibility.Visible;
+                if (mainWindow.Downloads1.ActualHeight.Equals(0))
+                {
+                    double height = 0;
+                    if (!mainWindow.Downloads1.ItemsCount.Equals(0))
+                    {
+                        height = mainWindow.Downloads1.MarginTop + 50 +
+                                 mainWindow.Downloads1.Items.Count*mainWindow.Downloads1.ItemHeight;
+                    }
+                    else
+                    {
+                        height = mainWindow.Downloads1.MarginTop + 50;
+                    }
+                    mainWindow.Downloads1.Visibility = Visibility.Visible;
+                    StaticFunctions.AnimateScale(0, 0, 250, height, mainWindow.Downloads1, 0.2);
+                    StaticFunctions.AnimateFade(0, 1, mainWindow.Downloads1, 0.2, mainWindow.Downloads1.RefreshDownloads);
+                }
             }));
-        }
-
-        public void OnDownloadUpdated(IBrowser browser, CefSharp.DownloadItem downloadItem,
-            IDownloadItemCallback callback)
-        {
         }
 
         public bool OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
@@ -811,77 +498,23 @@ namespace WebExpress
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Open popup in new tab error: " + ex.Message);
+                            Console.WriteLine("Open popup in new tab error: " + ex.Message + " " + ex.Data);
                         }
                     }));
 
             return true;
         }
+        public void OnTitleChanged(IWebBrowser browserControl, TitleChangedEventArgs titleChangedArgs) { }
+        public bool OnTooltipChanged(IWebBrowser browserControl, string text) { return true; }
+        public void OnStatusMessage(IWebBrowser browserControl, StatusMessageEventArgs statusMessageArgs){ }
+        public bool OnConsoleMessage(IWebBrowser browserControl, ConsoleMessageEventArgs consoleMessageArgs) { return true; }
+        public void OnDownloadUpdated(IBrowser browser, CefSharp.DownloadItem downloadItem, IDownloadItemCallback callback){ }
+        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
+        public bool DoClose(IWebBrowser browserControl, IBrowser browser){return false;}
+        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser){ }
+        private void textBox_GotMouseCapture(object sender, MouseEventArgs e) { textBox.SelectAll(); }
 
-        public void OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
-        {
-        }
-
-        public bool DoClose(IWebBrowser browserControl, IBrowser browser)
-        {
-            return false;
-        }
-
-        public void OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
-        {
-        }
-
-        private void Back_MouseEnter(object sender, MouseEventArgs e)
-        {
-            BackImage.Source = backBtnHover;
-        }
-
-        private void Back_MouseLeave(object sender, MouseEventArgs e)
-        {
-            BackImage.Source = backBtn;
-        }
-
-        private void Forward_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ForwardImage.Source = forwardBtnHover;
-        }
-
-        private void Forward_MouseLeave(object sender, MouseEventArgs e)
-        {
-            ForwardImage.Source = forwardBtn;
-        }
-
-        private void Refresh_MouseEnter(object sender, MouseEventArgs e)
-        {
-            RefreshImage.Source = refreshBtnHover;
-        }
-
-        private void Refresh_MouseLeave(object sender, MouseEventArgs e)
-        {
-            RefreshImage.Source = refreshBtn;
-        }
-
-        private void MenuButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            MenuImage.Source = menuBtnHover;
-        }
-
-        private void MenuButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            MenuImage.Source = menuBtn;
-        }
-
-        private void BookmarkButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            BookmarkImage.Source = bookmarkBtnHover;
-        }
-
-        private void BookmarkButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            BookmarkImage.Source = bookmarkBtn;
-        }
-
-        private void BookmarkButton_Click(object sender, RoutedEventArgs e)
+        private void BookmarkButton_Click(object sender, MouseButtonEventArgs e)
         {
             addbook = new AddBookmark(Title, WebView.Address, mainWindow);
             addbook.HorizontalAlignment = HorizontalAlignment.Right;
@@ -892,13 +525,46 @@ namespace WebExpress
             addbook.Visibility = Visibility.Visible;
             container.Children.Add(addbook);
         }
-
-
-        private void textBox_GotMouseCapture(object sender, MouseEventArgs e)
+       
+        public async Task ContrastColor(System.Drawing.Color color)
         {
-            textBox.SelectAll();
-        }
+            int d = 0;
 
+
+            double a = 1 - (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
+
+            if (a < 0.4)
+            {
+                if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
+                    mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground =
+                        System.Windows.Media.Brushes.Black;
+                textBox.Foreground = System.Windows.Media.Brushes.Black;
+                mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.Black;
+                await BlackButtons();
+                SolidColorBrush scb = new SolidColorBrush();
+                scb.Color = System.Windows.Media.Color.FromArgb(255, 255, 255, 255);
+                textBox.Background = scb;
+                mainWindow.TabBar.getTabFromForm(this).CloseTab.ImageSource("close_Tab.png");
+                mainWindow.TabBar.getTabFromForm(this).darkColor = false;
+                MagicBox._isDark = false;
+            }
+            else
+            {
+                if (!mainWindow.TabBar.getTabFromForm(this).bgTab)
+                    mainWindow.TabBar.getTabFromForm(this).label_TabTitle.Foreground =
+                        System.Windows.Media.Brushes.White;
+                textBox.Foreground = System.Windows.Media.Brushes.White;
+                await WhiteButtons();
+                SolidColorBrush scb = new SolidColorBrush();
+                scb.Color = System.Windows.Media.Color.FromArgb(50, 255, 255, 255);
+                textBox.Background = scb;
+                mainWindow.TabBar.getTabFromForm(this).CloseTab.ImageSource("close_Tab_white.png");
+                mainWindow.TabBar.getTabFromForm(this).actualForeground = System.Windows.Media.Brushes.White;
+                mainWindow.TabBar.getTabFromForm(this).darkColor = true;
+                MagicBox._isDark = true;
+            }
+        }
+      
         public async Task ChangeColor()
         {
             try
@@ -907,11 +573,8 @@ namespace WebExpress
                 {
                     Thread thread = new Thread(new ThreadStart(delegate ()
                     {
-                        Task.Delay(200); // this is important ...
-                        try
-                        {
+                        System.Threading.Thread.Sleep(200); 
                             this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
                                 new ThreadStart(async delegate ()
                                 {
                                     var topLeftCorner = WebView.PointToScreen(new System.Windows.Point(0, 0));
@@ -923,24 +586,20 @@ namespace WebExpress
                                         graphics.CopyFromScreen(topLeftGdiPoint, new System.Drawing.Point(), size,
                                             CopyPixelOperation.SourceCopy);
                                     }
+                                    SolidColorBrush oldBrush = (SolidColorBrush)Panel.Background;
                                     SolidColorBrush brush = new SolidColorBrush(StaticFunctions.ToMediaColor(screenShot.GetPixel(1, 1)));
+                                    StaticFunctions.AnimateColor(oldBrush, StaticFunctions.ToMediaColor(screenShot.GetPixel(1, 1)), Panel, 0.1);
                                     mainWindow.TabBar.getTabFromForm(this).Color = brush;
                                     mainWindow.TabBar.getTabFromForm(this).refreshColor();
 
-                                    textBox.Background = brush;
-                                    Panel.Background = brush;
-                                    ListContainer.Background = brush;
-                                    listBox.Background = brush;
+                                    StaticFunctions.AnimateColor(oldBrush, StaticFunctions.ToMediaColor(screenShot.GetPixel(1, 1)), textBox, 0.1);
+                                    StaticFunctions.AnimateColor(oldBrush, StaticFunctions.ToMediaColor(screenShot.GetPixel(1, 1)), ListContainer, 0.1);
+                                    StaticFunctions.AnimateColor(oldBrush, StaticFunctions.ToMediaColor(screenShot.GetPixel(1, 1)), MagicBox, 0.1);
 
 
-                                    ContrastColor(screenShot.GetPixel(1, 1));
+                                   await ContrastColor(screenShot.GetPixel(1, 1));
                                     this.Refresh();
                                 }));
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-                        }
-                        catch
-                        {
-                        }
                     }));
                     thread.Name = "thread-UpdateText";
                     thread.Start();
@@ -948,35 +607,15 @@ namespace WebExpress
 
                 }));
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Change color error: " + ex.Message + " " + ex.Data);
             }
         }
 
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private async void UserControl_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            await Task.Run(ChangeColor);
-        }
-        private static IEnumerable<Tuple<string, CefMenuCommand>> GetMenuItems(IMenuModel model)
-        {
-            var list = new List<Tuple<string, CefMenuCommand>>();
-            for(var i = 0; i < model.Count; i++)
-            {
-                var header = model.GetLabelAt(i);
-                var commandId = model.GetCommandIdAt(i);
-                list.Add(new Tuple<string, CefMenuCommand>(header, commandId));
-            }
-
-            return list;
-        }
-        public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters,
-            IMenuModel model)
+        private string url;
+        private string img;
+        void IContextMenuHandler.OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
             Console.WriteLine("Context menu opened");
             Console.WriteLine(parameters.MisspelledWord);
@@ -985,29 +624,55 @@ namespace WebExpress
             {
                 model.AddSeparator();
             }
-
+            url = parameters.LinkUrl;
+           
+            model.Clear();
             model.AddItem((CefMenuCommand)26501, "Open link in new tab");
+            
+            if (parameters.MediaType == ContextMenuMediaType.Image)
+            {
+                img = parameters.SourceUrl;
+                model.AddItem((CefMenuCommand) 26502, "Save image");
+            }
+
         }
 
-        public bool OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters,
-            CefMenuCommand commandId, CefEventFlags eventFlags)
+        bool IContextMenuHandler.OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
         {
-            
-                if (commandId == (CefMenuCommand) 26501)
+            if (commandId == (CefMenuCommand)26501)
+            {
+                if (!url.Equals(""))
                 {
-                Dispatcher.Invoke(() => {
-                    Console.WriteLine(parameters.UnfilteredLinkUrl);
-                    ApplicationCommands.New.Execute(
-                        new OpenTabCommandParameters(parameters.FrameUrl, "New tab", "#FFF9F9F9"), this);
-                   
-                });
+                    Dispatcher.Invoke(() =>
+                    {
+                        Console.WriteLine(parameters.SelectionText);
+                        ApplicationCommands.New.Execute(
+                            new OpenTabCommandParameters(url, "New tab", "#FFF9F9F9"), this);
+
+                    });
                     return true;
                 }
-           
+            }
+            if (commandId == (CefMenuCommand) 26502)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.FileName = "image.png";
+                dialog.Filter = "Png image (*.png)|*.png|Gif Image (*.gif)|*.gif|JPEG image (*.jpg)|*.jpg";
+
+                var result = dialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    Console.WriteLine("writing to: " + dialog.FileName);
+
+                    var wClient = new WebClient();
+                    wClient.DownloadFile(img, dialog.FileName);
+                }
+            }
+
             return false;
         }
 
-        public void OnContextMenuDismissed(IWebBrowser browserControl, IBrowser browser, IFrame frame)
+        void IContextMenuHandler.OnContextMenuDismissed(IWebBrowser browserControl, IBrowser browser, IFrame frame)
         {
             var chromiumWebBrowser = (ChromiumWebBrowser)browserControl;
 
@@ -1017,11 +682,11 @@ namespace WebExpress
             });
         }
 
-        public bool RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters,
-            IMenuModel model, IRunContextMenuCallback callback)
+        bool IContextMenuHandler.RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
         {
             var chromiumWebBrowser = (ChromiumWebBrowser)browserControl;
 
+            //IMenuModel is only valid in the context of this method, so need to read the values before invoking on the UI thread
             var menuItems = GetMenuItems(model);
 
             chromiumWebBrowser.Dispatcher.Invoke(() =>
@@ -1037,8 +702,12 @@ namespace WebExpress
                 {
                     menu.Closed -= handler;
 
-                   
-
+                    //If the callback has been disposed then it's already been executed
+                    //so don't call Cancel
+                    if (!callback.IsDisposed)
+                    {
+                        callback.Cancel();
+                    }
                 };
 
                 menu.Closed += handler;
@@ -1057,6 +726,44 @@ namespace WebExpress
             return true;
         }
 
+        private static IEnumerable<Tuple<string, CefMenuCommand>> GetMenuItems(IMenuModel model)
+        {
+            var list = new List<Tuple<string, CefMenuCommand>>();
+            for (var i = 0; i < model.Count; i++)
+            {
+                var header = model.GetLabelAt(i);
+                var commandId = model.GetCommandIdAt(i);
+                list.Add(new Tuple<string, CefMenuCommand>(header, commandId));
+            }
+
+            return list;
+        }
+
+       
+        private void RefreshButton_OnPreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            SnackBar.Text("Easter egg :)");
+            SnackBar.Visibility = Visibility.Visible;
+            StaticFunctions.AnimateHeight(0, 42, SnackBar, 0.1);
+        }
+
+        private void Panel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (StaticDeclarations.IsFullscreen)
+            {
+                StaticFunctions.AnimateHeight(4, 42, Panel, 0.2);
+                
+            }
+        }
+
+        private void Panel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (StaticDeclarations.IsFullscreen)
+            {
+                StaticFunctions.AnimateHeight(42, 3, Panel, 0.2);
+                StaticFunctions.AnimateHeight(ListContainer.Height, 0, ListContainer, 0.2);
+            }
+        }
     }
 
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,7 +41,9 @@ namespace WebExpress
             }
             else
             {
+
                 bg.Background = Brushes.Transparent;
+                CloseTab.ImageSource("close_Tab.png");
             }
         }
 
@@ -63,6 +63,10 @@ namespace WebExpress
                 mainWindow = mw;
                 closeTabMargin = 8;
                 favIconMargin = 6;
+                CloseTab.ImageSource("close_Tab.png");
+                
+                CloseTab.SetImageScale(8);
+                CloseTab.SetRippleMargin(1);
             }));
         }
 
@@ -91,22 +95,19 @@ namespace WebExpress
             }));
         }
 
+
         public bool bgTab
         {
             get { return _bgTab; }
             set
             {
                 _bgTab = value;
-                if (value == true)
+                if (value)
                 {
 
                     bg.Background = Brushes.Transparent;
                     label_TabTitle.Foreground = Brushes.Black;
-                    BitmapImage closeBtn = new BitmapImage();
-                    closeBtn.BeginInit();
-                    closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab.png");
-                    closeBtn.EndInit();
-                    CloseImage.Source = closeBtn;
+                    CloseTab.ImageSource("close_Tab.png");
 
                 }
                 else
@@ -114,14 +115,9 @@ namespace WebExpress
 
                     bg.Background = color;
                     label_TabTitle.Foreground = actualForeground;
-                    if (darkColor)
-                    {
-                        BitmapImage closeBtn = new BitmapImage();
-                        closeBtn.BeginInit();
-                        closeBtn.UriSource = new Uri("pack://application:,,,/Resources/close_Tab_white.png");
-                        closeBtn.EndInit();
-                        CloseImage.Source = closeBtn;
-                    }
+                    CloseTab.ImageSource(darkColor
+                        ? "close_Tab_white.png"
+                        : "close_Tab.png");
 
                 }
             }
@@ -144,17 +140,19 @@ namespace WebExpress
             label_TabTitle.Content = title;
         }
 
-        private void button_close_Click(object sender, RoutedEventArgs e)
+        private void button_close_Click(object sender, MouseButtonEventArgs e)
         {
-            try
-            {
-                Applets.Settings s = form as Applets.Settings;
-                s.SaveSettings();
-            }
-            catch
-            {
-
-            }
+                if (form.GetType() == typeof(Applets.Settings))
+                {
+                    try {
+                        Applets.Settings s = form as Applets.Settings;
+                        s.SaveSettings();
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine("Save settings error: " + ex.Message + " " + ex.Data + " ");
+                    }
+                }
+            
             Canvas parentForm = this.Parent as Canvas;
             Grid parentForm2 = parentForm.Parent as Grid;
             TabBar parentForm3 = parentForm2.Parent as TabBar;
@@ -193,7 +191,8 @@ namespace WebExpress
         {
             if (bgTab)
             {
-                bg.Background = Brushes.Gainsboro;
+                StaticFunctions.AnimateColor(Colors.Transparent, Colors.Gainsboro, bg, 0.2);
+
             }
         }
 
@@ -201,7 +200,7 @@ namespace WebExpress
         {
             if (bgTab)
             {
-                bg.Background = Brushes.Transparent;
+                StaticFunctions.AnimateColor(Colors.Gainsboro, Colors.Transparent, bg, 0.2);
             }
         }
 
@@ -212,29 +211,27 @@ namespace WebExpress
             TabBar parentForm3 = parentForm2.Parent as TabBar;
             parentForm3.SelectTab(this);
 
-            if (form.GetType() == typeof (TabView))
+            if (form.GetType() == typeof(TabView))
             {
                 TabView tv = (form as TabView);
-                Thread thread = new Thread(new ThreadStart(delegate()
-                {
-                    Thread.Sleep(200); // this is important ...
-                    try
-                    {
-                        this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
-                            new ThreadStart(async delegate()
-                            {
-                                await tv.ChangeColor();
-                                tv.Refresh();
-                            }));
-                    }
-                    catch
-                    {
-                    }
-                }));
-                thread.Name = "thread-UpdateText";
-                thread.Start();
+                await tv.ChangeColor();
 
             }
+        }
+
+        private void Me_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ActualWidth < 40)
+            {
+                try
+                {
+                    label_TabTitle.Width = ActualWidth - (CloseTab.ActualWidth + closeTabMargin);
+                }
+                catch
+                {
+                    
+                }
+            } 
         }
     }
     public static class ExtensionMethods

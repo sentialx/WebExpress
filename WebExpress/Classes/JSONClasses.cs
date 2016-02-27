@@ -1,6 +1,4 @@
-﻿
-using System.Collections.Generic;
-namespace WebExpress
+﻿namespace WebExpress
 {
 
     public class HistItem

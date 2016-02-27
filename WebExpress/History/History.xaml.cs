@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Newtonsoft.Json;
@@ -20,20 +21,27 @@ namespace WebExpress
             Loaded += History_Loaded;
         }
 
-        private void History_Loaded(object sender, RoutedEventArgs e)
+        private async void History_Loaded(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(StaticDeclarations.Historypath))
+            try
             {
-                string fileRead = System.IO.File.ReadAllText(StaticDeclarations.Historypath);
-                dynamic json = JsonConvert.DeserializeObject(fileRead);
-                foreach (dynamic item in json)
+                if (System.IO.File.Exists(StaticDeclarations.Historypath))
                 {
-                    AddHistory(Convert.ToString(item.Title), Convert.ToString(item.Url));
+                    string fileRead = System.IO.File.ReadAllText(StaticDeclarations.Historypath);
+                    dynamic json = JsonConvert.DeserializeObject(fileRead);
+                    foreach (dynamic item in json)
+                    {
+                        await AddHistory(Convert.ToString(item.Title), Convert.ToString(item.Url));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("History load error: " + ex.Message);
             }
         }
 
-        public void AddHistory(string title, string url)
+        public async Task AddHistory(string title, string url)
         {
             HistoryItem hi = new HistoryItem(title,url, this);
             content.Children.Add(hi);

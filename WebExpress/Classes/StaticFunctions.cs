@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Color = System.Drawing.Color;
 
 namespace WebExpress
 {
@@ -55,6 +55,150 @@ namespace WebExpress
             bi.UriSource = new Uri("pack://application:,,,/Resources/" + filename);
             bi.EndInit();
             image.Source = bi;
+        }
+
+        public static void AnimateScale(double fromX,double fromY, double toX, double toY, UIElement control, double duration)
+        {
+            var fade = new DoubleAnimation
+            {
+                From = fromY,
+                To = toY,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade, control);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(FrameworkElement.HeightProperty));
+
+            var fade2 = new DoubleAnimation
+            {
+                From = fromX,
+                To = toX,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade2, control);
+            Storyboard.SetTargetProperty(fade2, new PropertyPath(FrameworkElement.WidthProperty));
+
+
+            var sb = new Storyboard();
+            sb.Children.Add(fade2);
+            sb.Children.Add(fade);
+            sb.Begin();
+
+
+        }
+
+        public static void AnimateHeight(double from, double to, UIElement control, double duration)
+        {
+            var fade = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade, control);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(FrameworkElement.HeightProperty));
+
+
+            var sb = new Storyboard();
+            sb.Children.Add(fade);
+            sb.Begin();
+        }
+        public static void AnimateRipple(double from, double to, UIElement control, double duration)
+        {
+            var fade = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade, control);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(FrameworkElement.HeightProperty));
+
+            var fade2 = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade2, control);
+            Storyboard.SetTargetProperty(fade2, new PropertyPath(FrameworkElement.WidthProperty));
+
+
+            var sb = new Storyboard();
+            sb.Children.Add(fade2);
+            sb.Children.Add(fade);
+            sb.Completed +=
+    (o, e1) => { AnimateFade(control.Opacity, 0, control, 0.4);  };
+            sb.Begin();
+        }
+        public static void AnimateFade(double from, double to, UIElement control, double duration)
+        {
+            var fade = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade, control);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(UIElement.OpacityProperty));
+
+            var sb = new Storyboard();
+            sb.Children.Add(fade);
+            sb.Begin();
+            
+        }
+        public static void AnimateFade(double from, double to, UIElement control, double duration, Action method)
+        {
+            var fade = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = TimeSpan.FromSeconds(duration)
+            };
+            Storyboard.SetTarget(fade, control);
+            Storyboard.SetTargetProperty(fade, new PropertyPath(UIElement.OpacityProperty));
+
+            var sb = new Storyboard();
+            sb.Children.Add(fade);
+            sb.Completed +=
+                (o, e) =>
+                {
+                    method();
+                };
+            sb.Begin();
+        }
+
+        public static void AnimateColor(System.Windows.Media.Color from, System.Windows.Media.Color to, UIElement control, double duration)
+        {
+            SolidColorBrush myBrush = new SolidColorBrush();
+            myBrush.Color = from;
+            ColorAnimation myColorAnimation = new ColorAnimation();
+            myColorAnimation.From = from;
+            myColorAnimation.To = to;
+            myColorAnimation.Duration = new Duration(TimeSpan.FromSeconds(duration));
+            myBrush.BeginAnimation(SolidColorBrush.ColorProperty, myColorAnimation);
+            control.GetType().GetProperty("Background").SetValue(control, myBrush);
+        }
+        public static void AnimateColor(SolidColorBrush from, System.Windows.Media.Color to, UIElement control, double duration)
+        {
+            SolidColorBrush myBrush = new SolidColorBrush();
+            myBrush = from;
+            ColorAnimation myColorAnimation = new ColorAnimation();
+            myColorAnimation.From = from.Color;
+            myColorAnimation.To = to;
+            myColorAnimation.Duration = new Duration(TimeSpan.FromSeconds(duration));
+            myBrush.BeginAnimation(SolidColorBrush.ColorProperty, myColorAnimation);
+            control.GetType().GetProperty("Background").SetValue(control, myBrush);
+        }
+        public static void AnimateColor(SolidColorBrush from, SolidColorBrush to, UIElement control, double duration)
+        {
+            SolidColorBrush myBrush = new SolidColorBrush();
+            myBrush = from;
+            ColorAnimation myColorAnimation = new ColorAnimation();
+            myColorAnimation.From = from.Color;
+            myColorAnimation.To = to.Color;
+            myColorAnimation.Duration = new Duration(TimeSpan.FromSeconds(duration));
+            myBrush.BeginAnimation(SolidColorBrush.ColorProperty, myColorAnimation);
+            control.GetType().GetProperty("Background").SetValue(control, myBrush);
         }
     }
 }

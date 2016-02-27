@@ -9,7 +9,7 @@ namespace WebExpress
 
 		public string Url { get; private set; }
 		public string Title { get; private set; }
-		public Brush Brush { get; private set; }
+		public SolidColorBrush Brush { get; private set; }
 		public UserControl Control { get; private set;}
 
 		public OpenTabCommandParameters(string url, string title, string brush)

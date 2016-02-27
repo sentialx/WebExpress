@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace WebExpress
 {
@@ -23,9 +21,12 @@ namespace WebExpress
             webClient.DownloadFileAsync(new Uri(url), filepath + "\\" + filename);
             FileName.Text = filename;
             _filepath = filepath;
+            button.SetRippleMargin(1);
+           button.ImageSource("close_button.png");
             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
             webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
         }
+
 
         private void WebClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
@@ -38,7 +39,7 @@ namespace WebExpress
             ProgressBar.Width = e.ProgressPercentage * (this.ActualWidth / 100);
         }
 
-        private void button_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void button_Click(object sender, MouseButtonEventArgs e)
         {
             webClient.Dispose();
             Grid parent1 = this.Parent as Grid;
@@ -47,15 +48,6 @@ namespace WebExpress
 
         }
 
-        private void button_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button_hover.png", CloseImage);
-        }
-
-        private void button_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            StaticFunctions.ChangeButtonImage("close_button.png", CloseImage);
-        }
 
 
         private void UserControl_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -63,6 +55,9 @@ namespace WebExpress
             BrushConverter converter = new BrushConverter();
 
             bg.Background = (SolidColorBrush) converter.ConvertFromString("#FFE2E2E2");
+            SolidColorBrush scb = (SolidColorBrush) converter.ConvertFromString("#FFE2E2E2");
+            Color color = scb.Color;
+            StaticFunctions.AnimateColor(Colors.White, color, bg, 0.2);
         }
 
         private void UserControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
@@ -70,19 +65,24 @@ namespace WebExpress
             BrushConverter converter = new BrushConverter();
 
             bg.Background = (SolidColorBrush)converter.ConvertFromString("#FFF");
+            SolidColorBrush scb = (SolidColorBrush)converter.ConvertFromString("#FFE2E2E2");
+            Color color = scb.Color;
+            StaticFunctions.AnimateColor(color, Colors.White, bg, 0.2);
         }
 
         private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (Downloaded)
             {
-                try
                 {
-                    Process.Start(_filepath + "\\" + FileName.Text);
-                }
-                catch
-                {
+                    try
+                    {
+                        Process.Start(_filepath + "\\" + FileName.Text);
+                    }
+                    catch
+                    {
 
+                    }
                 }
             }
         }
@@ -95,9 +95,8 @@ namespace WebExpress
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == e.LeftButton)
+            if (Downloaded)
             {
-                if (Downloaded)
                 {
                     try
                     {
