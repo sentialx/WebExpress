@@ -11,6 +11,16 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 * Suggestions
 * Menu
 * Downloads
+* Context menu
+* Incognito
+* New window
+* Fullscreen
+* Screenshot function
+* News
+* Weather
+* Settings
+* Material Design UI
+* Bookmarks
 
 #Engine
 This browser is using CefSharp. You can find it on: https://github.com/cefsharp/CefSharp
