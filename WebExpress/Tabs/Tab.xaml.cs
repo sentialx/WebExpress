@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using WebExpress.Controls;
 using Brushes = System.Windows.Media.Brushes;
 
 namespace WebExpress
@@ -75,16 +76,14 @@ namespace WebExpress
 
             Dispatcher.BeginInvoke((Action) (() =>
             {
-                Canvas parentForm = this.Parent as Canvas;
-                Grid parentForm2 = parentForm.Parent as Grid;
-                TabBar parentForm3 = parentForm2.Parent as TabBar;
+                TabBar tb = this.FindParent<TabBar>();
                 mainWindow.container.Children.Add(form);
-                parentForm3.SelectTab(this);
-                if (parentForm3.TabCollection.Count > 0)
+                tb.SelectTab(this);
+                if (tb.TabCollection.Count > 0)
                 {
-                    for (var i = 0; i < parentForm3.TabCollection.Count - 1; i++)
+                    for (var i = 0; i < tb.TabCollection.Count - 1; i++)
                     {
-                        parentForm3.SelectTab(parentForm3.TabCollection[i + 1]);
+                        tb.SelectTab(tb.TabCollection[i + 1]);
                     }
                 }
                 if (this.ActualWidth - (CloseTab.ActualWidth + closeTabMargin) > 0)
@@ -152,11 +151,9 @@ namespace WebExpress
                         Console.WriteLine("Save settings error: " + ex.Message + " " + ex.Data + " ");
                     }
                 }
-            
-            Canvas parentForm = this.Parent as Canvas;
-            Grid parentForm2 = parentForm.Parent as Grid;
-            TabBar parentForm3 = parentForm2.Parent as TabBar;
-            parentForm3.RemoveTab(this);
+
+            TabBar tb = this.FindParent<TabBar>();
+            tb.RemoveTab(this);
 
         }
 
@@ -206,10 +203,8 @@ namespace WebExpress
 
         private async void Me_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Canvas parentForm = this.Parent as Canvas;
-            Grid parentForm2 = parentForm.Parent as Grid;
-            TabBar parentForm3 = parentForm2.Parent as TabBar;
-            parentForm3.SelectTab(this);
+            TabBar tb = this.FindParent<TabBar>();
+            tb.SelectTab(this);
 
             if (form.GetType() == typeof(TabView))
             {

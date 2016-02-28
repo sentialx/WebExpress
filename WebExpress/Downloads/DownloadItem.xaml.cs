@@ -4,6 +4,7 @@ using System.Net;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using WebExpress.Controls;
 
 namespace WebExpress
 {
@@ -42,8 +43,8 @@ namespace WebExpress
         private void button_Click(object sender, MouseButtonEventArgs e)
         {
             webClient.Dispose();
-            Grid parent1 = this.Parent as Grid;
-            Downloads downloads = parent1.Parent as Downloads;
+            Downloads downloads = this.FindParent<Downloads>();
+            
             downloads.RemoveDownload(this);
 
         }

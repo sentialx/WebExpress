@@ -122,6 +122,11 @@ namespace WebExpress
 
                 if (settings.City != null)
                     City.Content = Convert.ToString(json3.name);
+                else
+                {
+                    City.Content = "To configure news and weather";
+                    WeatherHeader.Content = "Hello!";
+                }
 
                 foreach (dynamic info in json3.weather)
                     State.Content = Convert.ToString(info.main);
@@ -152,6 +157,8 @@ namespace WebExpress
             catch (Exception ex)
             {
                 Console.WriteLine("Load weather error: " + ex.Message + " " + ex.Data);
+                City.Content = "To configure news and weather";
+                WeatherHeader.Content = "Hello!";
             }
 
 

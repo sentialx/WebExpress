@@ -35,10 +35,7 @@
 					IsSynchronizedWithCurrentItem="False" IsEditable="True">
                     <ComboBoxItem Content="Google" />
                     <ComboBoxItem Content="Bing" />
-                    <ComboBoxItem Content="Wikipedia" />
                     <ComboBoxItem Content="DuckDuckGo" />
-                    <ComboBoxItem Content="Yahoo" />
-                    <ComboBoxItem Content="YouTube" />
 
                 </ComboBox>
                 <Label x:Name="searchEngine" Content="Search engine" HorizontalAlignment="Left" Margin="77,150,0,0"

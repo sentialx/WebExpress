@@ -13,7 +13,7 @@
     
             RenderOptions.ClearTypeHint="Enabled"
              d:DesignHeight="1366" d:DesignWidth="1366" Background="#FFF9F9F9">
-    <ScrollViewer ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Margin="0, 10, 0, 0" CanContentScroll="False" HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
         <Grid Width="780" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid VerticalAlignment="Top" Width="780" Height="510" HorizontalAlignment="Center" Margin="0,50,0,0">

@@ -88,11 +88,16 @@ namespace WebExpress
         {
             await Dispatcher.BeginInvoke((Action) (() =>
             {
-
-
-                RefreshButton.ImageSource(StopButton);
-                refreshing = true;
-                startPage.Visibility = Visibility.Hidden;
+                try
+                {
+                    RefreshButton.ImageSource(StopButton);
+                    refreshing = true;
+                    startPage.Visibility = Visibility.Hidden;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("WebView framestart error: " + ex.Message + " " + ex.Data);
+                }
             }));
         }
 
@@ -252,20 +257,25 @@ namespace WebExpress
             {
                 if (e.Frame.IsMain)
                 {
-                    Task.Factory.StartNew(() => SetAddress(e.Url));
-                    RefreshButton.ImageSource("reload.png");
-                    refreshing = false;
-
-                    if (Directory.Exists("Extensions"))
+                    try
                     {
-                        foreach (string file in System.IO.Directory.GetFiles("Extensions", "*.js"))
+                        Task.Factory.StartNew(() => SetAddress(e.Url));
+                        refreshing = false;
+
+                        if (Directory.Exists("Extensions"))
                         {
-                            WebView.ExecuteScriptAsync(System.IO.File.ReadAllText(file));
-                            Console.WriteLine(System.IO.File.ReadAllText(file));
+                            foreach (string file in System.IO.Directory.GetFiles("Extensions", "*.js"))
+                            {
+                                WebView.ExecuteScriptAsync(System.IO.File.ReadAllText(file));
+                            }
                         }
+                        HideSuggestions();
+                        Task.Factory.StartNew(WriteHistory);
                     }
-                    HideSuggestions();
-                    Task.Factory.StartNew(WriteHistory);
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("WebView loadend error: " + ex.Message + " " + ex.Data);
+                    }
                 }
 
                 Task.Factory.StartNew(ChangeColor);
@@ -345,6 +355,16 @@ namespace WebExpress
                         if (Convert.ToString(dyn.SE) == "Google")
                         {
                             textBox.Text = textBox.Text.Replace(textBox.Text, "http://google.com/#q=" + textBox.Text);
+                            WebView.Load(textBox.Text);
+                        }
+                        if (Convert.ToString(dyn.SE) == "DuckDuckGo")
+                        {
+                            textBox.Text = textBox.Text.Replace(textBox.Text, "https://duckduckgo.com/?q=" + textBox.Text);
+                            WebView.Load(textBox.Text);
+                        }
+                        if (Convert.ToString(dyn.SE) == "Bing")
+                        {
+                            textBox.Text = textBox.Text.Replace(textBox.Text, "http://www.bing.com/search?q=" + textBox.Text);
                             WebView.Load(textBox.Text);
                         }
                     }
@@ -627,6 +647,7 @@ namespace WebExpress
             url = parameters.LinkUrl;
            
             model.Clear();
+            if (!url.Equals(""))
             model.AddItem((CefMenuCommand)26501, "Open link in new tab");
             
             if (parameters.MediaType == ContextMenuMediaType.Image)

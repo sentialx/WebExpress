@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using WebExpress.Controls;
 
 namespace WebExpress
 {
@@ -30,15 +31,14 @@ namespace WebExpress
                 {
 
                     System.IO.File.Delete(_dllPath);
-                    Grid parent = this.Parent as Grid;
-                    Sources parent2 = parent.Parent as Sources;
-                    parent2.container.Children.Clear();
-                    parent2.ItemsCount = 0;
+                    Sources sources = this.FindParent<Sources>();
+                    sources.container.Children.Clear();
+                    sources.ItemsCount = 0;
                     if (Directory.Exists("News"))
                     {
                         foreach (string file in System.IO.Directory.GetFiles("News", "*.news"))
                         {
-                            await parent2.AddSource(file);
+                            await sources.AddSource(file);
                         }
                     }
                 }
