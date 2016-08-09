@@ -25,5 +25,25 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 #Engine
 This browser is using CefSharp. You can find it on: https://github.com/cefsharp/CefSharp
 
+#Extensions
+  Files structure
+  Extensions
+  |-name.json
+  |-name.js
+  |-name.png
+  
+  name.json:
+  ```
+  {
+    "id":"name",
+    "description":"description",
+    "logo":"name.png",
+    "scripts": [
+        {"file":"name.js"}
+    ]
+}
+  ```
+
 #Authors
 This code was created by Eryk Rakowski (Sential)
+
