@@ -28,9 +28,9 @@ This browser is using CefSharp. You can find it on: https://github.com/cefsharp/
 #Extensions
   Files structure
   Extensions
-  |-name.json
-  |-name.js
-  |-name.png
+  * name.json
+  * name.js
+  * name.png
   
   name.json:
   ```
