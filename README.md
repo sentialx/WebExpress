@@ -21,6 +21,8 @@ We are rewriting WebExpress to C# in WPF from scratch using CefSharp. It will ha
 * Settings
 * Material Design UI
 * Bookmarks
+* Extensions
+* Developer tools
 
 #Engine
 This browser is using CefSharp. You can find it on: https://github.com/cefsharp/CefSharp
@@ -41,7 +43,7 @@ This browser is using CefSharp. You can find it on: https://github.com/cefsharp/
     "scripts": [
         {"file":"name.js"}
     ]
-}
+  }
   ```
 
 #Authors
