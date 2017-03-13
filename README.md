@@ -1,3 +1,5 @@
+This project is outdated. Check out new browser for better experience: [Wexond](https://github.com/nersent/wexond)
+
 # WebExpress
 This is an advanced web browser created in C# WPF. 
 
